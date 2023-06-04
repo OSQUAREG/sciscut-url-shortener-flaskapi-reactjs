@@ -15,6 +15,15 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATION = False
     SQLALCHEMY_ECHO = True
 
+    CACHE_TYPE = "SimpleCache"
+    CACHE_DEFAULT_TIMEOUT = 300
+
+    # RATELIMIT_DEFAULT = [
+    #     "10 per day", 
+    #     "3 per hour", 
+    #     # exempt_when=lambda: current_user.is_admin,
+    # ]
+
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(base_dir, "db.sqlite3")

@@ -1,8 +1,8 @@
 from flask_restx import Resource, abort
-from sqlalchemy import text
 from ..blocklist import BLOCKLIST
 from ..models import User
-from werkzeug.security import generate_password_hash, check_password_hash
+from ..utils import cache, limiter
+from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, current_user, get_jwt, get_jwt_identity, jwt_required
 from ..serializers.user import user_model, user_response_model, change_password_model, user_update_model
 from ..views import users_ns
@@ -11,6 +11,7 @@ from http import HTTPStatus
 
 @users_ns.route("signup/")
 class UserSignup(Resource):
+    @limiter.limit("10/minute")
     @users_ns.expect(user_model)
     @users_ns.marshal_with(user_response_model)
     def post(self):
@@ -47,7 +48,7 @@ class UserLogin(Resource):
         password = data.get("password")
 
         user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
+        if user and user.check_pwd_hash(password):
             access_token = create_access_token(identity=user.email)
             refresh_token = create_refresh_token(identity=user.email)
 
@@ -65,6 +66,8 @@ class UserLogin(Resource):
 
 @users_ns.route("refresh/")
 class TokenRefresh(Resource):
+    @limiter.limit("10/minute")
+    @cache.cached(timeout=50)
     @users_ns.doc(description="Refresh JWT Access Token")
     @jwt_required(refresh=True)
     def post(self):
@@ -95,6 +98,8 @@ class UserLogout(Resource):
 
 @users_ns.route("change-password/")
 class UserPasswordChange(Resource):
+    @limiter.limit("1/minute")
+    @cache.cached(timeout=50)
     @users_ns.expect(change_password_model)
     @users_ns.doc(description="Current User Password Change")
     @jwt_required()
@@ -109,7 +114,7 @@ class UserPasswordChange(Resource):
         confirm_password = data.get("confirm_password")
 
         if new_password == confirm_password:
-            if user and user.generate_pwd_hash(old_password):
+            if user and user.check_pwd_hash(old_password):
                 user.password_hash = generate_password_hash(new_password)
                 user.modified_by = current_user.username
                 user.update_db()
@@ -122,31 +127,33 @@ class UserPasswordChange(Resource):
                 response = {"message": "Password Changed Successfully. Please Log-in Again"}
                 return response, HTTPStatus.OK
 
-            response = {"message": "You are not authorized to perform this operation"}
+            response = {"message": "Unauthorized Request. Password Incorrect."}
             return response, HTTPStatus.UNAUTHORIZED
         
-        response = {"message": "Mismatched New and Confirm Password"}
+        response = {"message": "New Password and Confirm Password Mismatched"}
         return response, HTTPStatus.CONFLICT
 
 
-@users_ns.route("users/")
-class GetAllUsers(Resource):
-    @users_ns.marshal_with(user_response_model)
-    @users_ns.doc(description="Retrieve All Users (Admin Only)")
-    @jwt_required()
-    def get(self):
-        """Get All Users (admin only)"""
-        if not current_user.is_admin:
-            abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
+# @users_ns.route("users/")
+# class GetAllUsers(Resource):
+#     @users_ns.marshal_with(user_response_model)
+#     @users_ns.doc(description="Retrieve All Users (Admin Only)")
+#     @jwt_required()
+#     def get(self):
+#         """Get All Users (admin only)"""
+#         if not current_user.is_admin:
+#             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
             
-        users = User.get_all()        
-        message = f"All {len(users)} Users retrieved successfully."
-        response = {"message": message, "data": users}
-        return response, HTTPStatus.OK
+#         users = User.get_all()        
+#         message = f"All {len(users)} Users retrieved successfully."
+#         response = {"message": message, "data": users}
+#         return response, HTTPStatus.OK
 
 
-@users_ns.route("user/", doc={"description": "Retrieve Curent User"})
+@users_ns.route("user/")
 class GetSingleUser(Resource):
+    @limiter.limit("10/minute")
+    @cache.cached(timeout=50)
     @users_ns.marshal_with(user_response_model)
     @users_ns.doc(description="Retrieve Any User or Current User")
     @jwt_required()
@@ -156,6 +163,8 @@ class GetSingleUser(Resource):
         response = {"message": message, "data": current_user}
         return response, HTTPStatus.OK
 
+    @limiter.limit("10/minute")
+    @cache.cached(timeout=50)
     @users_ns.expect(user_update_model)
     @users_ns.marshal_with(user_response_model)
     @users_ns.doc(description="Retrieve Any User or Current User")
@@ -166,13 +175,13 @@ class GetSingleUser(Resource):
         data = users_ns.payload
 
         # validates that the username is not in use
-        if current_user.username != data.get('username') and current_user.validate_username(data.get('username')):
+        if current_user.username != data.get('username') and current_user.check_username(data.get('username')):
             abort(HTTPStatus.CONFLICT, message="Username already exist.")
         # update username
         current_user.username = data.get('username') if data.get('username') else current_user.username
         
         # validates that the username is not in use.
-        if current_user.email != data.get('email') and current_user.validate_email(data.get('email')):
+        if current_user.email != data.get('email') and current_user.check_email(data.get('email')):
             abort(HTTPStatus.CONFLICT, message="Email already exist.")
         # updates email
         current_user.email = data.get('email') if data.get('email') else current_user.email
@@ -192,6 +201,8 @@ class GetSingleUser(Resource):
         response = {"message": message, "data": current_user}
         return response, HTTPStatus.OK
 
+    @limiter.limit("1/minute")
+    @cache.cached(timeout=50)
     @users_ns.doc(description="Delete Current User")
     @jwt_required()
     def delete(self):
@@ -199,19 +210,4 @@ class GetSingleUser(Resource):
         current_user.delete_from_db()
         message = "User deleted successfully."
         return message, HTTPStatus.NO_CONTENT
-
-
-# @users_ns.route("test/", doc={"description": "Retrieve Curent User"})
-# class GetSingleUser(Resource):
-#     def get(self):
-#         # count = len(User.query.all())
-#         # username = User.email.split('@')[0]
-#         username = "test"
-#         search = username + "%@"
-#         count = User.query.filter(User.username.ilike(f"{username}%")).all()
-#         # count = User.query.filter(text("username LIKE :username")).params(username=f'{username}%').first()
-#         print(count)
-#         # count = db.session.query(User.email).filter(text(self.email).like("test")).count()
-#         # if int(count) > 0:
-#         #     return username + f"{count + 1}"
-#         # return username
+    

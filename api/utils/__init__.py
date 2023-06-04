@@ -1,5 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from flask_caching import Cache
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 
 naming_convention = {
@@ -13,6 +16,15 @@ naming_convention = {
 metadata = MetaData(naming_convention=naming_convention)
 
 db = SQLAlchemy()
+cache = Cache()
+limiter = Limiter(
+    get_remote_address,
+    default_limits=[
+        "10 per day", 
+        "3 per hour",
+    ],
+    storage_uri="memory://",
+)
 
 
 class DB_Func:

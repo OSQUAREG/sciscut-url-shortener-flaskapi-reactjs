@@ -22,13 +22,10 @@ class LoginForm(FlaskForm):
             raise validators.ValidationError("Invalid password")
 
 
-# class RegistrationForm(FlaskForm):
-#     first_name = StringField(label="First Name", validators=[validators.InputRequired()])
-#     last_name = StringField(label="Last Name", validators=[validators.InputRequired()])
-#     gender = StringField(label="Gender", validators=[validators.InputRequired()])
-#     email = StringField(label="Email", validators=[validators.InputRequired()])
-#     password = PasswordField(validators=[validators.InputRequired()])
+class RegistrationForm(FlaskForm):
+    email = StringField(label="Email", validators=[validators.InputRequired()])
+    password = PasswordField(validators=[validators.InputRequired()])
 
-#     def validate_email(self, field):
-#         if User.check_email_exist(self.email.data):
-#             raise validators.ValidationError("Email already exist")
+    def validate_email(self, field):
+        if User.check_email(self.email.data):
+            raise validators.ValidationError("Email already exist")

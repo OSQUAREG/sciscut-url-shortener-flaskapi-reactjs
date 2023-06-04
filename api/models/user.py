@@ -2,9 +2,10 @@ from ..utils import db, DB_Func
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
+from flask_login import UserMixin
 
 
-class User(db.Model, DB_Func):
+class User(db.Model, DB_Func, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -23,6 +24,7 @@ class User(db.Model, DB_Func):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.username = self.generate_username()
+        self.password_hash = self.generate_pwd_hash()
         
     def generate_username(self):
         username = self.email.split('@')[0]
@@ -32,16 +34,16 @@ class User(db.Model, DB_Func):
             return username + f"{count + 1}"
         return username
 
-    def check_password(self, password):
+    def check_pwd_hash(self, password):
         return check_password_hash(self.password_hash, password)
 
     def generate_pwd_hash(self, password):
         return generate_password_hash(password)
 
-    def validate_email(self, email):
+    def check_email(self, email):
         email = self.query.filter_by(email=email).first()
         return True if email else False
 
-    def validate_username(self, username):
+    def check_username(self, username):
         username = self.query.filter_by(username=username).first()
         return True if username else False

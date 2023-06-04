@@ -5,23 +5,26 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from .blocklist import BLOCKLIST
 from .models import User, Link
-from .utils import db, drop_create_all
+from .utils import db, drop_create_all, cache, limiter
 from .config.config import config_dict
 from .views.user import users_ns
 from .views.link import links_ns
+from .views.admin import admin_links_ns, admin_users_ns
 from flask_login import LoginManager
 from flask_admin import Admin, menu
 from flask_admin.contrib.sqla import ModelView
 from api.admin.admin_views import MyAdminIndexView, MyModelView, LogoutMenuLink
 
 def create_app(config=config_dict["dev"]):
-    app = Flask(__name__, template_folder="api/admin/templates")
+    app = Flask(__name__)
     app.config.from_object(config)
     db.init_app(app)
+    cache.init_app(app)
+    limiter.init_app(app)
 
     # Initialize flask-admin
     app.config["FLASK_ADMIN_SWATCH"] = "united"
-    admin = Admin(app, name='Admin: Scissor-URL Shortener API', template_mode='bootstrap3', index_view=MyAdminIndexView(), base_template="templates/my_master.html")
+    admin = Admin(app, name='Admin: Scissor-URL Shortener API', template_mode='bootstrap3', index_view=MyAdminIndexView(), base_template="my_master.html")
 
     admin.add_view(MyModelView(User, db.session))
     admin.add_view(MyModelView(Link, db.session))
@@ -72,6 +75,8 @@ def create_app(config=config_dict["dev"]):
 
     api.add_namespace(users_ns, path="/")
     api.add_namespace(links_ns, path="/")
+    api.add_namespace(admin_users_ns, path="/admin/users")
+    api.add_namespace(admin_links_ns, path="/admin/links")
 
     @app.shell_context_processor
     def make_shell_context():
@@ -87,7 +92,7 @@ def create_app(config=config_dict["dev"]):
         return render_template("index.html")
 
     # Flask views
-    @app.route('/admin')
+    @app.route('/')
     def admin_index():
         return render_template('index.html')
 
