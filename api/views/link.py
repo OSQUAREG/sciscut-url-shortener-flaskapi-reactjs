@@ -122,33 +122,15 @@ class GenerateQRCode(Resource):
         return {"message": message}, HTTPStatus.OK
 
 
-@links_ns.route("links/")
-class GetAllLinks(Resource):
-    @limiter.limit("10/minute")
-    @cache.cached(timeout=50)
-    @links_ns.marshal_with(link_response_model)
-    @links_ns.doc(description="Retrieve All Links (Admin Only)")
-    @jwt_required()
-    def get(self):
-        """Get All Links (admin only)"""
-        if not current_user.is_admin:
-            abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
-            
-        links = Link.get_all()
-        message = f"All {len(links)} Links retrieved succesfully"
-        response = {"message": message, "data": links}
-        return response, HTTPStatus.OK
-
-
 @links_ns.route("user/links/")
-class GetUserLinks(Resource):
+class GetCurrentUserLinks(Resource):
     @limiter.limit("10/minute")
     @cache.cached(timeout=50)
     @links_ns.marshal_with(link_response_model)
-    @links_ns.doc(description="Retrieve User Links")
+    @links_ns.doc(description="Retrieve Current User Links")
     @jwt_required()
     def get(self):
-        """Get User Links"""
+        """Get Current User Links"""
         links = Link.get_by_user_id(current_user.id)
 
         message = f"{current_user.username}'s {len(links)} links retrieved succesfully"
@@ -166,8 +148,8 @@ class GetUpdateDeleteLink(Resource):
     def get(self, link_id):
         """Get Single Link by Id"""
         link = Link.get_by_id(link_id)
-        # checks if current user created the shortened link
-        if not current_user.id == link.user_id:
+        # checks if current user owns the shortened link or is an admin
+        if not current_user.id == link.user_id or not current_user.is_admin:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
         message = f"'{link.title}' link retrieved successfully"
@@ -183,8 +165,8 @@ class GetUpdateDeleteLink(Resource):
     def put(self, link_id):
         """Update Single Link by ID"""
         link = Link.get_by_id(link_id)
-        # checks if current user created the shortened link
-        if not current_user.id == link.user_id:
+        # checks if current user owns the shortened link or is an admin
+        if not current_user.id == link.user_id or not current_user.is_admin:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
         data = links_ns.payload
@@ -249,8 +231,8 @@ class GetUpdateDeleteLink(Resource):
     def delete(self, link_id):
         """Delete Single Link by ID"""
         link = Link.get_by_id(link_id)
-        # checks if current user created the shortened link
-        if not current_user.id == link.user_id:
+        # checks if current user owns the shortened link or is an admin
+        if not current_user.id == link.user_id or not current_user.is_admin:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
         link.delete_from_db()

@@ -17,7 +17,6 @@ class UserSignup(Resource):
     def post(self):
         """Sign up a User"""
         data = users_ns.payload
-
         email = data.get("email")
         password = data.get("password")
 
@@ -43,7 +42,6 @@ class UserLogin(Resource):
     def post(self):
         """Login a User: Generates JWT Tokens"""
         data = users_ns.payload
-
         email = data.get("email")
         password = data.get("password")
 
@@ -132,22 +130,6 @@ class UserPasswordChange(Resource):
         
         response = {"message": "New Password and Confirm Password Mismatched"}
         return response, HTTPStatus.CONFLICT
-
-
-# @users_ns.route("users/")
-# class GetAllUsers(Resource):
-#     @users_ns.marshal_with(user_response_model)
-#     @users_ns.doc(description="Retrieve All Users (Admin Only)")
-#     @jwt_required()
-#     def get(self):
-#         """Get All Users (admin only)"""
-#         if not current_user.is_admin:
-#             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
-            
-#         users = User.get_all()        
-#         message = f"All {len(users)} Users retrieved successfully."
-#         response = {"message": message, "data": users}
-#         return response, HTTPStatus.OK
 
 
 @users_ns.route("user/")
