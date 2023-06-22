@@ -1,6 +1,8 @@
 from flask_restx import Namespace
 
-users_ns = Namespace(name="Users Namespace", description="Operations on Users")
+auth_ns = Namespace(name="Auth Namespace", description="Authentication Operations")
+
+user_ns = Namespace(name="User Namespace", description="User Operations")
 
 links_ns = Namespace(name="Links Namespace", description="Operations on Links")
 

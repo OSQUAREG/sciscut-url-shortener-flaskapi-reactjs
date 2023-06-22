@@ -4,19 +4,24 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from flask_login import UserMixin
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class User(db.Model, DB_Func, UserMixin):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, unique=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(25), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.Date, default=datetime.now)
     date_modified = db.Column(db.Date, onupdate=datetime.now)
 
-    links = db.relationship('Link', backref="user")
+    links = db.relationship("Link", backref="user")
 
     def __repr__(self):
         return f"<User: {self.email}>"
@@ -24,10 +29,9 @@ class User(db.Model, DB_Func, UserMixin):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.username = self.generate_username()
-        self.password_hash = self.generate_pwd_hash()
-        
+
     def generate_username(self):
-        username = self.email.split('@')[0]
+        username = self.email.split("@")[0]
         search = username + "@%"
         count = User.query.filter(User.email.like(search)).count()
         if count > 0:

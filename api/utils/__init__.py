@@ -3,6 +3,7 @@ from sqlalchemy import MetaData
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from werkzeug.security import generate_password_hash
 
 
 naming_convention = {
@@ -19,10 +20,10 @@ db = SQLAlchemy()
 cache = Cache()
 limiter = Limiter(
     get_remote_address,
-    default_limits=[
-        "10 per day", 
-        "3 per hour",
-    ],
+    # default_limits=[
+    #     "20 per day", 
+    #     "10 per hour",
+    # ],
     storage_uri="memory://",
 )
 
@@ -50,9 +51,4 @@ class DB_Func:
     @classmethod
     def get_all(cls):
         """Gets all data from a table in the database"""
-        return cls.query.all()
-
-
-def drop_create_all():
-    db.drop_all()
-    db.create_all()
+        return cls.query.order_by(cls.date_created.asc()).all()

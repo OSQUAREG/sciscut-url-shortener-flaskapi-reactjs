@@ -7,10 +7,11 @@ from ..serializers.link import link_response_model, add_link_model, update_link_
 from ..views import links_ns
 from http import HTTPStatus
 
+from ..utils import cache, limiter
 
-@links_ns.route("shorten/")
+@links_ns.route("/shorten")
 class ShortenLink(Resource):
-    @limiter.limit("1/minute")
+    @limiter.limit("10/minute")
     @cache.cached(timeout=50)
     @links_ns.expect(add_link_model)
     @links_ns.marshal_with(link_response_model)
@@ -22,7 +23,7 @@ class ShortenLink(Resource):
         # Checks if URL already exist for current user
         link = Link.get_link_by_long_url_user_id(data.get("long_url"), current_user.id)
         if link:
-            message = f"You already shortened the provided URL."
+            message = f"You already shortened the provided long URL."
             response = {"message": message, "data": link}
             return response, HTTPStatus.OK
 
@@ -30,7 +31,7 @@ class ShortenLink(Resource):
             title=data.get("title"),
             long_url=data.get("long_url"),
             user_id=current_user.id,
-            qr_code=data.get("qr_code"),
+            qr_code_added=data.get("qr_code_added"),
         )
         # checks if URL is valid
         if new_link.validate_long_url():
@@ -44,12 +45,12 @@ class ShortenLink(Resource):
             # checks if short custom url exists.
             if new_link.validate_short_url_by_user(new_link.short_url, current_user.id):
                 abort(HTTPStatus.CONFLICT, message="The provided custom URL already exists.")
-            
-            new_link.save_to_db()
 
             # if QR Code is requested
-            if new_link.qr_code:
+            if new_link.qr_code_added:
                 new_link.generate_qr_code()
+                    
+            new_link.save_to_db()
 
             message = f"The '{new_link.title}' URL shortened successfully."
             response = {"message": message, "data": new_link}
@@ -59,7 +60,7 @@ class ShortenLink(Resource):
             return response, HTTPStatus.BAD_REQUEST
 
 
-@links_ns.route("<short_url>/")
+@links_ns.route("/<short_url>")
 class RedirectLink(Resource):
     @cache.cached(timeout=50)
     @links_ns.doc(
@@ -72,12 +73,12 @@ class RedirectLink(Resource):
         link.update_db()
 
         message = "URL Redirected successfully."
-        response = {"message": message, "url": link.long_url}
-        return response, HTTPStatus.OK
-        # return redirect(link.long_url)
+        response = {"message": message, "data": link.long_url}
+        # return response, HTTPStatus.OK
+        return redirect(link.long_url)
 
 
-@links_ns.route("reset/<int:link_id>/")
+@links_ns.route("/reset/<int:link_id>")
 class ResetLink(Resource):
     @limiter.limit("10/minute")
     @cache.cached(timeout=50)
@@ -92,17 +93,19 @@ class ResetLink(Resource):
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
             
         link.short_url = link.generate_short_url()
+        link.is_custom = False
         link.update_db()
 
-        message = "Short URL reset successfully."
+        message = "Short URL reset successful."
         response = {"message": message, "data": link}
         return response, HTTPStatus.OK
 
 
-@links_ns.route("qr_code/<int:link_id>/")
+@links_ns.route("/qr_code/<int:link_id>")
 class GenerateQRCode(Resource):
     @limiter.limit("10/minute")
     @cache.cached(timeout=50)
+    @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Generate Link QR Code", params={"link_id": "Link ID"})
     @jwt_required()
     def patch(self, link_id):
@@ -113,18 +116,19 @@ class GenerateQRCode(Resource):
         if not current_user.id == link.user_id:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
             
-        link.qr_code = True
+        link.qr_code_added = True
         link.modified_by = current_user.username
         link.update_db()
         link.generate_qr_code()
 
         message = f"QR Code for '{link.title}' URL generated successfully."
-        return {"message": message}, HTTPStatus.OK
+        response = {"message": message, "data": link}
+        return response, HTTPStatus.OK
 
 
-@links_ns.route("user/links/")
+@links_ns.route("/user")
 class GetCurrentUserLinks(Resource):
-    @limiter.limit("10/minute")
+    @limiter.exempt
     @cache.cached(timeout=50)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Retrieve Current User Links")
@@ -138,7 +142,7 @@ class GetCurrentUserLinks(Resource):
         return response, HTTPStatus.OK
 
 
-@links_ns.route("links/<int:link_id>")
+@links_ns.route("/<int:link_id>")
 class GetUpdateDeleteLink(Resource):
     @limiter.limit("10/minute")
     @cache.cached(timeout=50)
@@ -149,7 +153,7 @@ class GetUpdateDeleteLink(Resource):
         """Get Single Link by Id"""
         link = Link.get_by_id(link_id)
         # checks if current user owns the shortened link or is an admin
-        if not current_user.id == link.user_id or not current_user.is_admin:
+        if not (current_user.id == link.user_id or current_user.is_admin):
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
         message = f"'{link.title}' link retrieved successfully"
@@ -166,7 +170,7 @@ class GetUpdateDeleteLink(Resource):
         """Update Single Link by ID"""
         link = Link.get_by_id(link_id)
         # checks if current user owns the shortened link or is an admin
-        if not current_user.id == link.user_id or not current_user.is_admin:
+        if not (current_user.id == link.user_id or current_user.is_admin):
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
         data = links_ns.payload
@@ -203,12 +207,12 @@ class GetUpdateDeleteLink(Resource):
             # retains the current title
             link.title = link.title
 
-        """Validating and updating the short URL"""
+        """Validating and updating the short URL and is_custom"""
         # checks if custom short URL is given and if it matches the current short URL and if is_custom is True
         if data.get("short_url") and data.get("short_url") != link.short_url and data.get("is_custom") == True:
             # then checks if the given custom short URL matches any existing short URL for user
             if link.validate_short_url_by_user(data.get("short_url"), current_user.id):
-                abort(HTTPStatus.CONFLICT, message="custom URL already exist.")
+                abort(HTTPStatus.CONFLICT, message="Short URL already used.")
             else:
                 # updates the short URL and is_custom set to True
                 link.short_url, link.is_custom = data.get("short_url"), True
@@ -232,9 +236,9 @@ class GetUpdateDeleteLink(Resource):
         """Delete Single Link by ID"""
         link = Link.get_by_id(link_id)
         # checks if current user owns the shortened link or is an admin
-        if not current_user.id == link.user_id or not current_user.is_admin:
+        if not (current_user.id == link.user_id or current_user.is_admin):
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
         link.delete_from_db()
-        message = "Link deleted successfully."
-        return message, HTTPStatus.NO_CONTENT
+        message = f"Link '{link.title}' deleted successfully."
+        return message, HTTPStatus.OK

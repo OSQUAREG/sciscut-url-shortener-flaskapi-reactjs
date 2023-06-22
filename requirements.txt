@@ -21,6 +21,7 @@ Flask-Migrate==4.0.4
 flask-restx==1.1.0
 Flask-SQLAlchemy==3.0.3
 Flask-Validator==1.4.2
+Flask-WTF==1.1.1
 greenlet==2.0.2
 idna==3.4
 importlib-resources==5.12.0

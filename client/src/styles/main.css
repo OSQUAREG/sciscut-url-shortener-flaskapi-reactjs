@@ -1,0 +1,23 @@
+.container {
+    margin-top: 30px;
+    padding: 0 50px;
+}
+
+.heading {
+    font-size: 3em;
+}
+
+.form {
+    padding:0em 10px;
+}
+
+.form-label {
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: green;
+    font-weight: bold;
+}

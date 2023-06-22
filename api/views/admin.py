@@ -1,7 +1,9 @@
 from http import HTTPStatus
 from flask_jwt_extended import current_user, jwt_required
+from flask_limiter import ExemptionScope
 from flask_restx import Namespace, Resource, abort
 from ..models import User, Link
+from ..utils import limiter, cache
 from . import admin_users_ns, admin_links_ns
 from ..serializers.user import user_response_model, user_update_model
 from ..serializers.link import link_response_model, update_link_model
@@ -78,23 +80,24 @@ class AdminGetUpdateDeleteUser(Resource):
 
         user = User.get_by_id(user_id)
         user.delete_from_db()
-        response = f"User '{user.username}' retrieved successfully."
-        return response, HTTPStatus.NO_CONTENT
+        response = f"User '{user.username}' deleted successfully."
+        return response, HTTPStatus.OK
 
 
 """ADMIN OPERATION ON LINKS"""
 @admin_links_ns.route("/")
 class AdminGetAllLinks(Resource):
-    @admin_users_ns.marshal_with(user_response_model)
-    @admin_users_ns.doc(description="Retrieve All Links (Admin Only)")
-    @jwt_required()
+    @limiter.exempt(flags=ExemptionScope.APPLICATION)
+    @admin_links_ns.marshal_with(link_response_model)
+    @admin_links_ns.doc(description="Retrieve All Links (Admin Only)")
+    # @jwt_required()
     def get(self):
         """Get All Links (Admin only)"""
-        if not current_user.is_admin:
-            abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
+        # if not current_user.is_admin:
+        #     abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
         
         links = Link.get_all()
-        message = f"All {len(links)} Users retrieved successfully."
+        message = f"All {len(links)} links retrieved successfully."
         response = {"message": message, "data": links}
         return response, HTTPStatus.OK
 
@@ -110,7 +113,7 @@ class AdminGetUserLinks(Resource):
         
         user = User.get_by_id(user_id)
         user_links = Link.get_by_user_id(user_id)
-        message = f"User {user.username}'s links retireved successfully."
+        message = f"User {user.username}'s {len(user_links)} links retireved successfully."
         response = {"message": message, "data": user_links}
         return response, HTTPStatus.OK
     

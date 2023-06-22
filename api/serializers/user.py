@@ -1,9 +1,9 @@
 from flask_restx import fields
-from ..views import users_ns
+from ..views import user_ns
 
 
 """INPUT MODELS"""
-user_model = users_ns.model(
+user_model = user_ns.model(
     name="User Login/Sign Up",
     model={
         "email": fields.String(description="User Email", required=True),
@@ -11,7 +11,7 @@ user_model = users_ns.model(
     },
 )
 
-change_password_model = users_ns.model(
+change_password_model = user_ns.model(
     name="User Change Password Model",
     model={
         "old_password": fields.String(description="Old Password", required=True),
@@ -19,17 +19,18 @@ change_password_model = users_ns.model(
         "confirm_password": fields.String(description="Confirm Password", required=True),}
     )
 
-user_update_model = users_ns.model(
+user_update_model = user_ns.model(
     name="User Update Model",
     model={
         "email": fields.String(description="User Email"),
         "username": fields.String(description="Username"),
+        "password": fields.String(description="Password", required=True),
     },
 )
 
 
 """OUTPUT MODELS"""
-user_detail_model = users_ns.model(
+user_detail_model = user_ns.model(
     name="User Detail Model",
     model={
         "id": fields.Integer(description="User Id"),
@@ -41,11 +42,21 @@ user_detail_model = users_ns.model(
     },
 )
 
-user_response_model = users_ns.model(
+user_response_model = user_ns.model(
     name="User Response Model",
     model={
         "message": fields.String(description="Response Message"),
         "data": fields.Nested(model=user_detail_model, description="Response Data"),
+    },
+)
+
+user_resp_logged_model = user_ns.model(
+    name="User Response Model",
+    model={
+        "message": fields.String(description="Response Message"),
+        "data": fields.Nested(model=user_detail_model, description="Response Data"),
+        "access_token": fields.String(description="Access Token"),
+        "refresh_token": fields.String(description="Refresh Token"),
     },
 )
 

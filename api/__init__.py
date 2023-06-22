@@ -1,19 +1,22 @@
 from http import HTTPStatus
-from flask import Flask, render_template, url_for
+from flask import Flask, jsonify, render_template, url_for
 from flask_restx import Api, Namespace
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from .blocklist import BLOCKLIST
 from .models import User, Link
-from .utils import db, drop_create_all, cache, limiter
+from .utils import db, cache, limiter
+from .utils.create_defaults import drop_create_all
 from .config.config import config_dict
-from .views.user import users_ns
+from .views.auth import auth_ns
+from .views.user import user_ns
 from .views.link import links_ns
 from .views.admin import admin_links_ns, admin_users_ns
 from flask_login import LoginManager
 from flask_admin import Admin, menu
 from flask_admin.contrib.sqla import ModelView
 from api.admin.admin_views import MyAdminIndexView, MyModelView, LogoutMenuLink
+from flask_cors import CORS
 
 def create_app(config=config_dict["dev"]):
     app = Flask(__name__)
@@ -21,6 +24,7 @@ def create_app(config=config_dict["dev"]):
     db.init_app(app)
     cache.init_app(app)
     limiter.init_app(app)
+    CORS(app)
 
     # Initialize flask-admin
     app.config["FLASK_ADMIN_SWATCH"] = "united"
@@ -44,6 +48,14 @@ def create_app(config=config_dict["dev"]):
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blacklist(jwt_header, jwt_payload):
         return jwt_payload["jti"] in BLOCKLIST
+
+    @jwt.expired_token_loader
+    def my_expired_token_callback(jwt_header, jwt_payload):
+        return jsonify({
+            'status': 401,
+            'sub_status': 42,
+            'message': 'Your login has expired. Please login again.'
+        }), 401
 
     # Initialize flask-login
     login_manager = LoginManager(app)
@@ -73,8 +85,9 @@ def create_app(config=config_dict["dev"]):
         errors=Flask.errorhandler,
     )
 
-    api.add_namespace(users_ns, path="/")
-    api.add_namespace(links_ns, path="/")
+    api.add_namespace(auth_ns, path="/auth")
+    api.add_namespace(user_ns, path="/user")
+    api.add_namespace(links_ns, path="/links")
     api.add_namespace(admin_users_ns, path="/admin/users")
     api.add_namespace(admin_links_ns, path="/admin/links")
 

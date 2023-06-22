@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
     def validate_login(self, field):
         user = self.get_user()
 
-        if user is None and not user.is_admin and not user.is_staff:
+        if user is None and not user.is_admin:
             raise validators.ValidationError("Unauthorized Admin User")
 
         if not check_password_hash(user.password, self.password.data):
