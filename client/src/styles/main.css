@@ -8,7 +8,8 @@
 }
 
 .form {
-    padding:0em 10px;
+    /* padding: 0em 10px; */
+    margin: 0 100px;
 }
 
 .form-label {

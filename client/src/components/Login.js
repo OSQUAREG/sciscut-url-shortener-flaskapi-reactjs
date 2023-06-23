@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Form, Button } from "react-bootstrap";
+import { Alert, Form, Button, InputGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { baseUrl } from "..";
@@ -12,6 +12,11 @@ const LoginPage = () => {
     const [show, setShow] = useState(false);
     const [serverResponse, setServerResponse] = useState("");
     const navigate = useNavigate();
+
+    const [showPassword, setShowPassword] = useState(false);
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
     const loginUser = (data) => {
         console.log(data);
@@ -36,8 +41,7 @@ const LoginPage = () => {
                 return response.json()
             })
             .then(data => {
-                console.log(data)
-                // console.log(data["data"])
+                // console.log(data)
                 setServerResponse(data.message)
                 console.log(serverResponse)
 
@@ -45,9 +49,7 @@ const LoginPage = () => {
                 setShow(true)
             })
             .catch(error => console.log(error))
-
-        // reset();
-
+        reset();
     }
     return (
         <div className="login container">
@@ -73,10 +75,14 @@ const LoginPage = () => {
                     <br />
                     <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label className="form-label" >Password</Form.Label>
-                        <Form.Control type="password" placeholder="Your password"
-                            {...register("password", { required: true })}
-                        />
-                        {errors.password && <small style={{ color: "red" }}>Password is required</small>}
+                        <InputGroup>
+                            <Form.Control type={showPassword ? "text" : "password"} placeholder="Your password"
+                                {...register("password", { required: true })}
+                            />
+                            <Button variant="secondary btn-sm" type="button" onClick={toggleShowPassword}
+                            >{showPassword ? "Hide Password" : "Show Password"}</Button>
+                            {errors.password && <small style={{ color: "red" }}>Password is required</small>}
+                        </InputGroup>
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

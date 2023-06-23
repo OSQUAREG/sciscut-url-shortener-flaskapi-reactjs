@@ -14,6 +14,7 @@ import LogoutPage from './components/Logout';
 export const baseUrl = "http://localhost:5000";
 export const usernameRegex = /^[a-zA-Z0-9_]{3,25}$/;
 export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+export const customUrlRegex = /^[a-zA-Z0-9_]{5,20}$/;
 
 
 const App = () => {

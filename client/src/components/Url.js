@@ -4,7 +4,7 @@ import { baseUrl } from '..';
 
 const URL = ({ title, long_url, short_url, date_created, visits, is_custom, onClick, onDelete }) => {
     return (
-        <Card className="mb-2 boxShadow" style={{ width: '30rem' }}>
+        <Card className="mb-2 boxShadow" >
             <Card.Body>
                 <Card.Title>{title}</Card.Title>
                 <Card.Link href={`/${short_url}`} target="_blank">{baseUrl}/{short_url}</Card.Link>
