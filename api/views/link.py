@@ -9,6 +9,7 @@ from http import HTTPStatus
 
 from ..utils import cache, limiter
 
+
 @links_ns.route("/shorten")
 class ShortenLink(Resource):
     @limiter.limit("10/minute")
@@ -23,7 +24,12 @@ class ShortenLink(Resource):
         # Checks if URL already exist for current user
         link = Link.get_link_by_long_url_user_id(data.get("long_url"), current_user.id)
         if link:
-            message = f"You already shortened the provided long URL."
+            print("link found for:", current_user.id)
+        else:
+            print("link not found for:", current_user.id)
+
+        if link:
+            message = f"You already shortened the provided long UR. See title: '{link.title}'."
             response = {"message": message, "data": link}
             return response, HTTPStatus.OK
 
@@ -36,20 +42,32 @@ class ShortenLink(Resource):
         # checks if URL is valid
         if new_link.validate_long_url():
             # checks if title already exists
-            if new_link.validate_title_by_user(new_link.title, current_user.id):
-                abort(HTTPStatus.CONFLICT, message=f"URL Title '{new_link.title}' already exists")
-                
+            if new_link.title and new_link.validate_title_by_user(
+                new_link.title, current_user.id
+            ):
+                abort(
+                    HTTPStatus.CONFLICT,
+                    message=f"URL Title '{new_link.title}' already exists",
+                )
+
             # checks if short custom url is provided and if not generates one.
-            new_link.short_url, new_link.is_custom = (data.get("short_url"), True) if data.get("short_url") else (new_link.generate_short_url(), False)
-            
+            new_link.short_url, new_link.is_custom = (
+                (data.get("short_url"), True)
+                if data.get("short_url")
+                else (new_link.generate_short_url(), False)
+            )
+
             # checks if short custom url exists.
             if new_link.validate_short_url_by_user(new_link.short_url, current_user.id):
-                abort(HTTPStatus.CONFLICT, message="The provided custom URL already exists.")
+                abort(
+                    HTTPStatus.CONFLICT,
+                    message="The provided custom URL already exists.",
+                )
 
             # if QR Code is requested
             if new_link.qr_code_added:
                 new_link.generate_qr_code()
-                    
+
             new_link.save_to_db()
 
             message = f"The '{new_link.title}' URL shortened successfully."
@@ -64,7 +82,8 @@ class ShortenLink(Resource):
 class RedirectLink(Resource):
     @cache.cached(timeout=50)
     @links_ns.doc(
-        description="Redirect Shortened URL", params={"short_url": "Shortened or Customized URL"}
+        description="Redirect Shortened URL",
+        params={"short_url": "Shortened or Customized URL"},
     )
     def get(self, short_url):
         """Redirect Shortened URL to the Long URL"""
@@ -91,7 +110,7 @@ class ResetLink(Resource):
         # checks if current user created the shortened link
         if not current_user.id == link.user_id:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
-            
+
         link.short_url = link.generate_short_url()
         link.is_custom = False
         link.update_db()
@@ -110,12 +129,12 @@ class GenerateQRCode(Resource):
     @jwt_required()
     def patch(self, link_id):
         """Generate QR Code for the Long URL"""
-        
+
         link = Link.get_by_id(link_id)
         # checks if current user created the shortened link
         if not current_user.id == link.user_id:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
-            
+
         link.qr_code_added = True
         link.modified_by = current_user.username
         link.update_db()
@@ -178,11 +197,13 @@ class GetUpdateDeleteLink(Resource):
         """Validating and updating the long URL"""
         # checks if new long URL is given and if it matches the current long URL
         if data.get("long_url") and data.get("long_url") != link.long_url:
-            link_exist = Link.get_link_by_long_url_user_id(data.get("long_url"), current_user.id)
+            link_exist = Link.get_link_by_long_url_user_id(
+                data.get("long_url"), current_user.id
+            )
             # then checks if the long URL is already shortened for user
             if link_exist:
-                message="The provided long URL is already shortened."
-                response={"message": message, "data": link_exist}
+                message = "The provided long URL is already shortened."
+                response = {"message": message, "data": link_exist}
                 return response, HTTPStatus.OK
             else:
                 # updates the long URL and resets 'visits' to 0
@@ -209,7 +230,11 @@ class GetUpdateDeleteLink(Resource):
 
         """Validating and updating the short URL and is_custom"""
         # checks if custom short URL is given and if it matches the current short URL and if is_custom is True
-        if data.get("short_url") and data.get("short_url") != link.short_url and data.get("is_custom") == True:
+        if (
+            data.get("short_url")
+            and data.get("short_url") != link.short_url
+            and data.get("is_custom") == True
+        ):
             # then checks if the given custom short URL matches any existing short URL for user
             if link.validate_short_url_by_user(data.get("short_url"), current_user.id):
                 abort(HTTPStatus.CONFLICT, message="Short URL already used.")
@@ -222,7 +247,7 @@ class GetUpdateDeleteLink(Resource):
         else:
             # retains the current short URL and is_custom
             link.short_url, link.is_custom = link.short_url, link.is_custom
-            
+
         link.update_db()
 
         message = f"'{link.title}' link updated successfully"

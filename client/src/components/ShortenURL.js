@@ -28,7 +28,7 @@ const ShortenURLPage = () => {
         fetch(`${baseUrl}/links/shorten`, requestOptions)
             .then(response => {
                 console.log(response.status)
-                if (response.status === 201) {
+                if ((response.status === 201) || (response.status === 200)) {
                     navigate("/")
                 }
                 else if (response.status === 401) {
@@ -45,7 +45,7 @@ const ShortenURLPage = () => {
             })
             .catch(error => console.log(error))
 
-        reset()
+        // reset()
     }
 
     return (

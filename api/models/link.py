@@ -1,5 +1,5 @@
 from flask_jwt_extended import current_user
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, text
 from ..utils import db, DB_Func
 from datetime import datetime
 import string
@@ -110,17 +110,48 @@ class Link(db.Model, DB_Func):
     @classmethod
     def get_link_by_long_url_user_id(cls, long_url: str, user_id: int):
         """Gets a link by long URL and user id provided."""
-        return cls.query.filter_by(long_url=long_url, user_id=user_id).first()
+        # return cls.query.filter_by(long_url=long_url, user_id=user_id).first()
 
         # to get long URL without http prefix
-        # long_url_wo_http = (
-        #     long_url.split("//")[1]
-        #     if long_url.startswith("http://") or long_url.startswith("https://")
-        #     else long_url
-        # )
+        long_url_wt_https = (
+            long_url
+            if long_url.startswith("https://")
+            else "https://" + long_url.split("//")[1]
+            if long_url.startswith("http://")
+            else "https://" + long_url
+        )
 
-        # return cls.query.filter_by(
-        #     and_(
-        #         or_(long_url=long_url, long_url=long_url_wo_http), user_id=user_id
-        #     ).first()
-        # )
+        long_url_wt_http = (
+            long_url
+            if long_url.startswith("http://")
+            else "http://" + long_url.split("//")[1]
+            if long_url.startswith("https://")
+            else "http://" + long_url
+        )
+
+        long_url_wo_http = (
+            long_url.split("//")[1]
+            if (long_url.startswith("http://") or long_url.startswith("https://"))
+            else long_url
+        )
+
+        if long_url_wo_http:
+            return cls.query.filter_by(long_url=long_url_wo_http, user_id=user_id).first()
+
+        if long_url_wo_http:
+            return cls.query.filter_by(long_url=long_url_wt_http, user_id=user_id).first()
+
+        return cls.query.filter(
+        and_(
+            or_(
+                text("long_url = :long_url_wt_https"),
+                text("long_url = :long_url_wt_http"),
+                text("long_url = :long_url_wo_http")
+            ),
+            cls.user_id==user_id
+        )
+    ).params(
+        long_url_wt_http=long_url_wt_http,
+        long_url_wo_http=long_url_wo_http
+    ).first()
+
