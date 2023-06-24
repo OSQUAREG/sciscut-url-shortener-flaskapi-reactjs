@@ -135,23 +135,21 @@ class Link(db.Model, DB_Func):
             else long_url
         )
 
-        if long_url_wo_http:
-            return cls.query.filter_by(long_url=long_url_wo_http, user_id=user_id).first()
-
-        if long_url_wo_http:
-            return cls.query.filter_by(long_url=long_url_wt_http, user_id=user_id).first()
-
-        return cls.query.filter(
-        and_(
-            or_(
-                text("long_url = :long_url_wt_https"),
-                text("long_url = :long_url_wt_http"),
-                text("long_url = :long_url_wo_http")
-            ),
-            cls.user_id==user_id
+        return (
+            cls.query.filter(
+                and_(
+                    or_(
+                        text("long_url = :long_url_wt_https"),
+                        text("long_url = :long_url_wt_http"),
+                        text("long_url = :long_url_wo_http"),
+                    ),
+                    cls.user_id == user_id,
+                )
+            )
+            .params(
+                long_url_wt_http=long_url_wt_http,
+                long_url_wo_http=long_url_wo_http,
+                long_url_wt_https=long_url_wt_https,
+            )
+            .first()
         )
-    ).params(
-        long_url_wt_http=long_url_wt_http,
-        long_url_wo_http=long_url_wo_http
-    ).first()
-

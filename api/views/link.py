@@ -29,7 +29,7 @@ class ShortenLink(Resource):
             print("link not found for:", current_user.id)
 
         if link:
-            message = f"You already shortened the provided long UR. See title: '{link.title}'."
+            message = f"You already shortened the provided long UR. See title: '{link.title if link.title else link.long_url}'."
             response = {"message": message, "data": link}
             return response, HTTPStatus.OK
 
@@ -41,7 +41,7 @@ class ShortenLink(Resource):
         )
         # checks if URL is valid
         if new_link.validate_long_url():
-            # checks if title already exists
+            # checks if title already exists only when title is provided
             if new_link.title and new_link.validate_title_by_user(
                 new_link.title, current_user.id
             ):
