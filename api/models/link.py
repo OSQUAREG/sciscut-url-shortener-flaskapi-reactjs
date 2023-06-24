@@ -1,4 +1,4 @@
-from flask_jwt_extended import current_user
+import os
 from sqlalchemy import and_, or_, text
 from ..utils import db, DB_Func
 from datetime import datetime
@@ -6,9 +6,6 @@ import string
 import validators
 import qrcode
 from random import choices
-
-# from sqlalchemy.orm import
-import uuid
 
 
 class Link(db.Model, DB_Func):
@@ -50,17 +47,14 @@ class Link(db.Model, DB_Func):
             texts = string.digits + string.ascii_letters
             short_url = "".join(choices(texts, k=5))
             # checks if the short url exist
-            link = self.query.filter_by(short_url=short_url).first()
-            if link:
+            link1 = self.query.filter_by(short_url=short_url).first()
+            link2 = self.query.filter_by(short_url=self.qr_code_id).first()
+            if link1 or link2:
                 return self.generate_short_url()
             return short_url
 
-    # def generate_qr_code_uuid(self):
-    #     qr_code_id = str(uuid.uuid4(hex))
-    #     qr_uuid_exist = self.query.filter_by(qr_code_id=qr_code_id).first()
-    #     if qr_uuid_exist:
-    #         return self.generate_qr_code_uuid()
-    #     return qr_code_id
+    def reset_short_url(self):
+        self.short_url, self.is_custom = (self.qr_code_id, False) if self.qr_code_added else (self.generate_short_url(), False)
 
     def generate_qr_code(self):
         """Genereates QR Code for the given long URL."""
@@ -78,14 +72,19 @@ class Link(db.Model, DB_Func):
             self.qr_code_id = (
                 self.short_url if not self.is_custom else self.generate_short_url()
             )
-
-            qr_id_exist = self.query.filter_by(qr_code_id=self.qr_code_id).first()
-            if qr_id_exist:
-                self.generate_qr_code()
-
-            # self.qr_code_id = self.generate_short_url()
             img.save(f"client/public/qr_code_img/{self.qr_code_id}.png")
-            # return f"api/qr_code/{self.qr_code_id}.png"
+
+    def remove_qr_code(self):
+        link = self.get_by_id(self.id)
+        img_path = f"client/public/qr_code_img/{self.qr_code_id}.png"
+        # checks if file exist.
+        if os.path.exists(img_path):
+            # Delete the file
+            os.remove(img_path)
+            self.qr_code_id = None
+            return True
+        else:
+            return False
 
     def validate_title_by_user(self, title: str, user_id: int):
         """Validates that new title does not already exist for current user."""
@@ -110,8 +109,6 @@ class Link(db.Model, DB_Func):
     @classmethod
     def get_link_by_long_url_user_id(cls, long_url: str, user_id: int):
         """Gets a link by long URL and user id provided."""
-        # return cls.query.filter_by(long_url=long_url, user_id=user_id).first()
-
         # to get long URL without http prefix
         long_url_wt_https = (
             long_url

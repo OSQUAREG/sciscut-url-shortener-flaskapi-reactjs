@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash
 # Create customized model view class
 class MyModelView(ModelView):
     column_exclude_list = ["password_hash", ]
-    page_size = 10
+    page_size = 20
     can_delete = True
     # can_create = False
     edit_modal = True

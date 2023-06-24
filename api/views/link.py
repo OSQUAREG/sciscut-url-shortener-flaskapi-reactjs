@@ -111,8 +111,8 @@ class ResetLink(Resource):
         if not current_user.id == link.user_id:
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
 
-        link.short_url = link.generate_short_url()
-        link.is_custom = False
+        link.reset_short_url()
+        link.modified_by = current_user.username
         link.update_db()
 
         message = "Short URL reset successful."
@@ -123,7 +123,7 @@ class ResetLink(Resource):
 @links_ns.route("/qr_code/<int:link_id>")
 class GenerateQRCode(Resource):
     @limiter.limit("10/minute")
-    @cache.cached(timeout=50)
+    @cache.cached(timeout=300)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Generate Link QR Code", params={"link_id": "Link ID"})
     @jwt_required()
@@ -137,10 +137,35 @@ class GenerateQRCode(Resource):
 
         link.qr_code_added = True
         link.modified_by = current_user.username
-        link.update_db()
         link.generate_qr_code()
+        link.update_db()
 
         message = f"QR Code for '{link.title}' URL generated successfully."
+        response = {"message": message, "data": link}
+        return response, HTTPStatus.OK
+
+
+@links_ns.route("/remove/qr_code/<int:link_id>")
+class RemoveQRCode(Resource):
+    @limiter.limit("10/minute")
+    @cache.cached(timeout=300)
+    @links_ns.marshal_with(link_response_model)
+    @links_ns.doc(description="Remove Link QR Code", params={"link_id": "Link ID"})
+    @jwt_required()
+    def patch(self, link_id):
+        """Remove QR Code for the Long URL"""
+
+        link = Link.get_by_id(link_id)
+        # checks if current user created the shortened link
+        if not current_user.id == link.user_id:
+            abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
+
+        link.qr_code_added = False
+        link.modified_by = current_user.username
+        link.remove_qr_code()
+        link.update_db()
+
+        message = f"QR Code for '{link.title}' URL removed successfully."
         response = {"message": message, "data": link}
         return response, HTTPStatus.OK
 

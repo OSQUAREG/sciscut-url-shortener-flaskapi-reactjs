@@ -15,7 +15,7 @@ add_link_model = links_ns.model(
 )
 
 update_link_model = links_ns.model(
-    name="Add Link Model",
+    name="Update Link Model",
     model={
         "title": fields.String(description="Link Title", required=True),
         "long_url": fields.String(description="Long URL", required=True),

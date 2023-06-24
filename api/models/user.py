@@ -16,7 +16,7 @@ class User(db.Model, DB_Func, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, unique=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(25), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.Date, default=datetime.now)
     date_modified = db.Column(db.Date, onupdate=datetime.now)

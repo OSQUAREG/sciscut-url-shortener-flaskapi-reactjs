@@ -16,7 +16,7 @@ const LoggedInLinks = () => {
             <Nav.Link className="nav-link" href="/">Home</Nav.Link>
             <Nav.Link className="nav-link" href="/shorten">Shorten URL</Nav.Link>
             <Nav.Link className="nav-link" href="/features">Features</Nav.Link>
-            <Nav.Link className="nav-link" href="#" onClick={() => logoutUser()}>Log out</Nav.Link>
+            {/* <Nav.Link className="nav-link" href="#" onClick={() => logoutUser()}>Log out</Nav.Link> */}
         </>
     )
 };
@@ -323,7 +323,7 @@ const NavBar = () => {
     const LoggedInUser = () => {
         return (
             <>
-                <span style={{color:"white"}} >Active User: </span> <Link style={{ color: "green", fontWeight: "bold", fontSize: "25px" }} >{currentUser?.username}</Link>
+                <span style={{ color: "white" }} >Active User: </span> <Link style={{ color: "green", fontWeight: "bold", fontSize: "25px" }} >{currentUser?.username}</Link>
             </>
         )
     }
@@ -357,9 +357,10 @@ const NavBar = () => {
                                         <LoggedInUser />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu >
-                                        <Dropdown.Item onClick={showViewModal}>View Profile</Dropdown.Item>
-                                        <Dropdown.Item onClick={showUpdateModal}>Update Profile</Dropdown.Item>
-                                        <Dropdown.Item onClick={showChangePasswordModal}>Change Password</Dropdown.Item>
+                                        <Dropdown.Item style={{color:"green"}} onClick={() => showViewModal()}>View Profile</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: "green" }} onClick={() => showUpdateModal()}>Update Profile</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: "green" }} onClick={() => showChangePasswordModal()}>Change Password</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: "green" }} onClick={() => logoutUser()}>Log Out</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </>
