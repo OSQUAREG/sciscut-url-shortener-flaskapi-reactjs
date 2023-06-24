@@ -8,8 +8,11 @@
 }
 
 .form {
-    /* padding: 0em 10px; */
-    margin: 0 100px;
+    padding: 50px 50px;
+    margin: 10px 100px;
+    border: green 5px solid;
+    border-radius: 20px;
+    background-color: rgb(220, 248, 220);
 }
 
 .form-label {
@@ -20,5 +23,19 @@
 
 .nav-link {
     color: green;
-    font-weight: bold;
+    /* font-weight: bold; */
+    font-size: 20px;
+}
+
+.link {
+    color: green;
+    text-decoration-line: none;
+}
+
+.box {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card {
+    background-color: rgb(220, 248, 220);
 }

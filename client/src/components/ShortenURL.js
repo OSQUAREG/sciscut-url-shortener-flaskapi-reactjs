@@ -1,25 +1,19 @@
 import React, { useState } from "react";
 import { Alert, Form, Button } from "react-bootstrap";
-// import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { baseUrl } from "..";
 import { useNavigate } from "react-router-dom"
-import { logout } from "../auth";
+import { logoutUser } from "../auth";
 
 const ShortenURLPage = () => {
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [show, setShow] = useState(false);
     const [serverResponse, setServerResponse] = useState("");
-    // const [serverStatus, setServerStatus] = useState("");
     const navigate = useNavigate();
 
     const shortenUrl = (data) => {
-        // console.log(data);
-
-        const token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
-        // console.log(token)
-
+        let token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
         const headers = new Headers({
             "Content-Type": "application/json",
             "Authorization": `Bearer ${JSON.parse(token)}`
@@ -32,22 +26,21 @@ const ShortenURLPage = () => {
         }
 
         fetch(`${baseUrl}/links/shorten`, requestOptions)
-            .then(response => response.json())
+            .then(response => {
+                console.log(response.status)
+                if (response.status === 201) {
+                    navigate("/")
+                }
+                else if (response.status === 401) {
+                    logoutUser()
+                    navigate("/login");
+                }
+                return response.json()
+            })
             .then(data => {
                 console.log(data)
                 setServerResponse(data.message)
                 // console.log(data.status)
-
-                // setShow(true)
-
-                if (data.status === 401) {
-                    logout()
-                    navigate("/login");
-                }
-                else {
-                    navigate("/")
-                }
-
                 setShow(true)
             })
             .catch(error => console.log(error))
@@ -57,7 +50,7 @@ const ShortenURLPage = () => {
 
     return (
         <div className="shorten container">
-            <div className="form">
+            <div className="form box">
                 {show ?
                     <>
                         <Alert variant="danger" onClose={() => setShow(true)} dismissible>
@@ -79,7 +72,7 @@ const ShortenURLPage = () => {
                     <br />
                     <Form.Group className="mb-3">
                         <Form.Label>Long URL</Form.Label>
-                        <Form.Control type="text" placeholder="Enter your long URL password"
+                        <Form.Control type="text" placeholder="Enter your long URL"
                             {...register("long_url", { required: true })}
                         />
                         <Form.Text className="text-muted">
@@ -108,7 +101,7 @@ const ShortenURLPage = () => {
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">
-                        <Button as="sub" variant="primary" onClick={handleSubmit(shortenUrl)} >Submit</Button>
+                        <Button as="sub" variant="success" onClick={handleSubmit(shortenUrl)} >Submit</Button>
                     </Form.Group>
                 </Form>
             </div>

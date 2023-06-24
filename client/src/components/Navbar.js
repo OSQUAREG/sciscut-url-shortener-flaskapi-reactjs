@@ -35,7 +35,7 @@ const LoggedOutLinks = () => {
 const NavBar = () => {
 
     const [logged] = useAuth();
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
     const [currentUser, setCurrentUser] = useState();
     // const [userId, setUserId] = useState(0)
 
@@ -48,7 +48,7 @@ const NavBar = () => {
     useEffect(() => {
         fetch(`${baseUrl}/user`, requestOptions)
             .then(response => {
-                console.log(response.status)
+                // console.log(response.status)
                 if (response.status === 401) {
                     logoutUser();
                 }
@@ -323,7 +323,7 @@ const NavBar = () => {
     const LoggedInUser = () => {
         return (
             <>
-                Active User: <Link style={{ color: "green", fontWeight: "bold", fontSize: "25px" }} >{currentUser?.username}</Link>
+                <span style={{color:"white"}} >Active User: </span> <Link style={{ color: "green", fontWeight: "bold", fontSize: "25px" }} >{currentUser?.username}</Link>
             </>
         )
     }
@@ -337,7 +337,7 @@ const NavBar = () => {
     }
 
     return (
-        <Navbar bg="light" expand="lg">
+        <Navbar bg="dark" variant='dark' expand="lg">
             <Container className='container'>
                 <Navbar.Brand href="/" style={{ color: "red", fontSize: "30px", fontWeight: "bold" }} >Scissor App</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -347,7 +347,7 @@ const NavBar = () => {
                     </Nav>
                 </Navbar.Collapse>
                 <Navbar.Collapse className="justify-content-end">
-                    <Navbar.Text>
+                    <Navbar>
                         {logged ?
                             <>
                                 <Dropdown as={NavItem}>
@@ -356,7 +356,7 @@ const NavBar = () => {
                                         <ChangeUserPasswordModal />
                                         <LoggedInUser />
                                     </Dropdown.Toggle>
-                                    <Dropdown.Menu>
+                                    <Dropdown.Menu >
                                         <Dropdown.Item onClick={showViewModal}>View Profile</Dropdown.Item>
                                         <Dropdown.Item onClick={showUpdateModal}>Update Profile</Dropdown.Item>
                                         <Dropdown.Item onClick={showChangePasswordModal}>Change Password</Dropdown.Item>
@@ -366,7 +366,7 @@ const NavBar = () => {
                             :
                             <LoggedOutUser />
                         }
-                    </Navbar.Text>
+                    </Navbar>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

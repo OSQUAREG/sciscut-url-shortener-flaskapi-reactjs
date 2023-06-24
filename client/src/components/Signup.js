@@ -99,7 +99,7 @@ const SignupPage = () => {
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">
-                        <Button as="sub" variant="primary" onClick={handleSubmit(submitForm)} >Sign Up</Button>
+                        <Button as="sub" variant="success" onClick={handleSubmit(submitForm)} >Sign Up</Button>
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

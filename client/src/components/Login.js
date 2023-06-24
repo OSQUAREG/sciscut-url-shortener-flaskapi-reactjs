@@ -33,9 +33,9 @@ const LoginPage = () => {
 
         fetch(`${baseUrl}/auth/login`, requestOptions)
             .then(response => {
-                const statusText = response.statusText
-                console.log(statusText)
-                if (statusText === "Created") {
+                // console.log(response.statusText)
+                // console.log(response.status)
+                if (response.status === 201) {
                     navigate("/")
                 }
                 return response.json()
@@ -47,6 +47,8 @@ const LoginPage = () => {
 
                 login(data.access_token)
                 setShow(true)
+                const reload = window.location.reload()
+                reload()
             })
             .catch(error => console.log(error))
         reset();
@@ -86,7 +88,7 @@ const LoginPage = () => {
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">
-                        <Button as="sub" variant="primary" onClick={handleSubmit(loginUser)} >Login</Button>
+                        <Button as="sub" variant="success" onClick={handleSubmit(loginUser)} >Login</Button>
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

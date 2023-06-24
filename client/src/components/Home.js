@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth";
 import { baseUrl } from "..";
-import URL from "./Url";
+import { URL, URLDetails } from "./Url";
 import { Button, Modal, Form, Container, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
@@ -195,13 +195,13 @@ const HomePage = () => {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" onClick={handleSubmit(updateURL)}>Update</Button>
+                        <Button variant="success" onClick={handleSubmit(updateURL)}>Update</Button>
                         <Button variant="secondary" onClick={closeModal}>Close</Button>
                     </Modal.Footer>
                 </Modal>
 
                 <Container>
-                    <Button className="mb-3" href="/shorten">Create New Short URL</Button>
+                    <Button className="mb-3" variant="success" href="/shorten">Create New Short URL</Button>
                     <h2 className="mb-3">Your URL Lists</h2>
                     <Row>
                         <Col xs={12} sm={5} className="mb-3 boxShadow" >
@@ -216,26 +216,39 @@ const HomePage = () => {
                                             date_created={link.date_created}
                                             visits={link.visits}
                                             is_custom={link.is_custom}
-                                            onClick={() => showModal(link.id)}
+                                            onUpdate={() => showModal(link.id)}
                                             onDelete={() => deleteURL(link.id)}
+                                            onRetrieve={() => getURL(link.id)}
                                         />
                                     ))}
                                     < br />
-                                    <Button className="mb-5" href="/shorten">Create New Short URL</Button>
+                                    <Button className="mb-5" variant="success" href="/shorten">Create New Short URL</Button>
                                 </>
                             ) : (
                                 <p>
-                                    No URLs available. <Link to="/shorten">Create Your First Short URL</Link>
+                                        No URLs available. <Link className="link" to="/shorten">Create Your First Short URL</Link>
                                 </p>
                             )}
                         </Col>
                         <Col xs={12} sm={7} className="mb-3 boxShadow" >
                             <div >
-                                <h1>This wil contain the URL Title.</h1>
-                                <h3>This wil contain the Long URL.</h3>
-                                <h3>This wil contain the Short URL.</h3>
-                                <p>This is for the number of visits</p>
-                                <p>This is for the date it was created</p>
+                                {link &&
+                                    <URLDetails
+                                    id={link.id}
+                                    title={link.title}
+                                    long_url={link.long_url}
+                                    short_url={link.short_url}
+                                    visits={link.visits}
+                                    is_custom={link.is_custom}
+                                    date_created={link.date_created}
+                                    qr_code_added={link.qr_code_added}
+                                    qr_code_id={link.qr_code_id}
+                                    onUpdate={() => showModal(link.id)}
+                                    onReset={() => showModal(link.id)}
+                                    onDelete={() => deleteURL(link.id)}
+                                    />
+
+                                }
                             </div>
                         </Col>
                     </Row>
@@ -247,15 +260,17 @@ const HomePage = () => {
     const LoggedOutHome = () => {
         return (
             <>
-                <Link to="/signup" className="btn btn-primary">Sign Up Here to Get Started</Link>
+                <Link to="/signup" className="btn btn-success m-1">Sign-up Here to Get Started</Link>
+                <Link to="/login" className="btn btn-success m-1">Log-in Here to Shorten Your URL</Link>
             </>
         )
     };
 
     return (
         <div className="home container">
-            {/* <><AlertMessage /></> */}
+
             <h1 className="heading">Welcome to <br /> <span style={{ color: "red", fontSize: "100px" }}>Scissor App</span></h1>
+            <br />
             <h5><i>...your favorite URL Shortener and QR Code Generator</i></h5>
             <br />
             {logged ? <LoggedInHome /> : <LoggedOutHome />}

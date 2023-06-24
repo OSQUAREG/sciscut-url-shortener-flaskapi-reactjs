@@ -1,10 +1,13 @@
 from flask_jwt_extended import current_user
+from sqlalchemy import and_, or_
 from ..utils import db, DB_Func
 from datetime import datetime
 import string
 import validators
 import qrcode
 from random import choices
+
+# from sqlalchemy.orm import
 import uuid
 
 
@@ -33,7 +36,11 @@ class Link(db.Model, DB_Func):
 
     def validate_long_url(self):
         """Validates the long URL to ensure that it is valid URL string."""
-        if validators.url(self.long_url) or validators.url(f"http://{self.long_url}") or validators.url(f"https://{self.long_url}"):
+        if (
+            validators.url(self.long_url)
+            or validators.url(f"http://{self.long_url}")
+            or validators.url(f"https://{self.long_url}")
+        ):
             return True
         return False
 
@@ -68,38 +75,52 @@ class Link(db.Model, DB_Func):
             qr.make(fit=True)
             img = qr.make_image(fill_color="black", back_color="white")
 
-            self.qr_code_id = self.short_url if not self.is_custom else self.generate_short_url()
+            self.qr_code_id = (
+                self.short_url if not self.is_custom else self.generate_short_url()
+            )
 
             qr_id_exist = self.query.filter_by(qr_code_id=self.qr_code_id).first()
             if qr_id_exist:
                 self.generate_qr_code()
-            
+
             # self.qr_code_id = self.generate_short_url()
-            img.save(f"api/qr_code/{self.qr_code_id}.png")
+            img.save(f"client/public/qr_code_img/{self.qr_code_id}.png")
             # return f"api/qr_code/{self.qr_code_id}.png"
 
-    def validate_title_by_user(self, title:str, user_id:int):
+    def validate_title_by_user(self, title: str, user_id: int):
         """Validates that new title does not already exist for current user."""
         link = self.query.filter_by(title=title, user_id=user_id).first()
         return True if link else False
 
-    def validate_short_url_by_user(self, short_url:str, user_id:int):
+    def validate_short_url_by_user(self, short_url: str, user_id: int):
         """Validates that new long URL does not already exist for current user."""
         link = self.query.filter_by(short_url=short_url, user_id=user_id).first()
         return True if link else False
-    
-    @classmethod
-    def get_by_user_id(cls, user_id:int):
-        """Gets all links by user id provided."""
-        return cls.query.filter_by(user_id=user_id).all()
 
     @classmethod
-    def get_link_by_short_url(cls, short_url:str):
+    def get_by_user_id(cls, user_id: int):
+        """Gets all links by user id provided."""
+        return cls.query.filter_by(user_id=user_id).order_by(cls.id.desc()).all()
+
+    @classmethod
+    def get_link_by_short_url(cls, short_url: str):
         """Gets a link by the shortened URL provided."""
         return cls.query.filter_by(short_url=short_url).first()
 
     @classmethod
-    def get_link_by_long_url_user_id(cls, long_url:str, user_id:int):
+    def get_link_by_long_url_user_id(cls, long_url: str, user_id: int):
         """Gets a link by long URL and user id provided."""
         return cls.query.filter_by(long_url=long_url, user_id=user_id).first()
-    
+
+        # to get long URL without http prefix
+        # long_url_wo_http = (
+        #     long_url.split("//")[1]
+        #     if long_url.startswith("http://") or long_url.startswith("https://")
+        #     else long_url
+        # )
+
+        # return cls.query.filter_by(
+        #     and_(
+        #         or_(long_url=long_url, long_url=long_url_wo_http), user_id=user_id
+        #     ).first()
+        # )
