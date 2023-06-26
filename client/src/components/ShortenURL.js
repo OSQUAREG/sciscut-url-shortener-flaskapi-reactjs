@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { baseUrl } from "..";
+import { baseUrl, urlRegex } from "..";
 import { useNavigate } from "react-router-dom"
 import { logoutUser } from "../auth";
 
@@ -45,7 +45,7 @@ const ShortenURLPage = () => {
             })
             .catch(error => console.log(error))
 
-        // reset()
+        reset()
     }
 
     return (
@@ -73,13 +73,16 @@ const ShortenURLPage = () => {
                     <Form.Group className="mb-3">
                         <Form.Label>Long URL</Form.Label>
                         <Form.Control type="text" placeholder="Enter your long URL"
-                            {...register("long_url", { required: true })}
+                            {...register("long_url", {
+                                required: { value: true, message: "Long URL is required"},
+                                pattern: { value: urlRegex, message: "URL must start with: 'https://' or 'http://'" }
+                            })}
                         />
                         <Form.Text className="text-muted">
                             Start with: https://... or http://...
                         </Form.Text>
                         <br />
-                        {errors.long_url && <small style={{ color: "red" }}>Long URL is required</small>}
+                        {errors.long_url && <small style={{ color: "red" }}>{errors.long_url.message }</small>}
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

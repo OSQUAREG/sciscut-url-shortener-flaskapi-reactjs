@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logoutUser, useAuth } from "../auth";
-import { baseUrl } from "..";
+import { useAuth } from "../auth";
+import { baseUrl, domain, urlRegex } from "..";
 import { URL, URLDetails } from "./Url";
-import { Button, Modal, Form, Container, Row, Col } from "react-bootstrap";
+import { Button, Modal, Form, Container, Row, Col} from "react-bootstrap";
 import { useForm } from "react-hook-form";
+// import RedirectLink from "./Redirect";
 
 
 const HomePage = () => {
 
-    const [logged] = useAuth()
+    const [logged] = useAuth();
 
     const LoggedInHome = () => {
         const [links, setLinks] = useState([]);
@@ -17,6 +18,8 @@ const HomePage = () => {
         const [show, setShow] = useState(false);
         const { register, handleSubmit, setValue, formState: { errors } } = useForm();
         const [linkId, setLinkId] = useState(0);
+
+        const navigate = useNavigate();
 
         let token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
         const requestOptions = {
@@ -51,130 +54,12 @@ const HomePage = () => {
             });
         };
 
-        // const [showShortenURL, setShowShortenURL] = useState(false);
-        // const closeShortenURLModal = () => { setShowShortenURL(false) };
-        // const showShortenURLModal = () => { setShowShortenURL(true) };
-
-        // const ShortenURLModal = () => {
-
-        //     const { register, handleSubmit, formState: { errors } } = useForm();
-        //     // const [show, setShow] = useState(false);
-        //     // const [serverResponse, setServerResponse] = useState("");
-        //     const navigate = useNavigate();
-
-        //     const shortenUrl = (data) => {
-        //         let token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
-        //         const headers = new Headers({
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${JSON.parse(token)}`
-        //         });
-
-        //         const requestOptions = {
-        //             method: "POST",
-        //             headers: headers,
-        //             body: JSON.stringify(data)
-        //         }
-
-        //         fetch(`${baseUrl}/links/shorten`, requestOptions)
-        //             .then(response => {
-        //                 console.log(response.status)
-        //                 if ((response.status === 201) || (response.status === 200)) {
-        //                     navigate("/")
-        //                 }
-        //                 else if (response.status === 401) {
-        //                     logoutUser()
-        //                     navigate("/login");
-        //                 }
-        //                 return response.json()
-        //             })
-        //             .then(data => {
-        //                 console.log(data)
-        //                 // setServerResponse(data.message)
-        //                 // console.log(data.status)
-        //                 // setShow(true)
-        //                 getURL(data.data.id)
-        //             })
-        //             .catch(error => console.log(error))
-
-        //         // reset()
-        //     }
-
-        //     return (
-        //         <>
-        //             <Modal
-        //                 show={showShortenURL}
-        //                 size="lg"
-        //                 onHide={closeShortenURLModal}
-        //                 aria-labelledby="contained-modal-title-vcenter1"
-        //                 centered
-        //             >
-        //                 <Modal.Header closeButton>
-        //                     <Modal.Title id="contained-modal-title-vcenter">
-        //                         Shorten Your URL
-        //                     </Modal.Title>
-        //                 </Modal.Header>
-        //                 <Modal.Body>
-        //                     <div className="form box">
-        //                         <Form>
-        //                             <Form.Group className="mb-3">
-        //                                 <Form.Label>URL Title</Form.Label>
-        //                                 <Form.Control type="text" placeholder="[Optional] Enter URL Title"
-        //                                     {...register("title", { required: false, maxLength: 50 })}
-        //                                 />
-        //                                 {errors.password?.type === "maxLength" && <small style={{ color: "red" }}>Maximum Character should be 50.</small>}
-        //                             </Form.Group>
-        //                             <br />
-        //                             <Form.Group className="mb-3">
-        //                                 <Form.Label>Long URL</Form.Label>
-        //                                 <Form.Control type="text" placeholder="Enter your long URL"
-        //                                     {...register("long_url", { required: true })}
-        //                                 />
-        //                                 <Form.Text className="text-muted">
-        //                                     Start with: https://... or http://...
-        //                                 </Form.Text>
-        //                                 <br />
-        //                                 {errors.long_url && <small style={{ color: "red" }}>Long URL is required</small>}
-        //                             </Form.Group>
-        //                             <br />
-        //                             <Form.Group className="mb-3">
-        //                                 <Form.Label>Custom URL</Form.Label>
-        //                                 <Form.Control type="text" placeholder="[Optional] Enter a custom URL"
-        //                                     {...register("short_url", { required: false, maxLength: 20 })}
-        //                                 />
-        //                                 <Form.Text className="text-muted">
-        //                                     Ignore for auto-generated short URL.
-        //                                 </Form.Text>
-        //                                 <br />
-        //                                 {errors.short_url?.type === "maxLength" && <small style={{ color: "red" }}>Maximum Character should be 20.</small>}
-        //                             </Form.Group>
-        //                             <br />
-        //                             <Form.Group className="mb-3" controlId="formBasicCheckbox">
-        //                                 <Form.Check type="checkbox" label="Generate QR Code?"
-        //                                     {...register("qr_code_added", { required: false })}
-        //                                 />
-        //                             </Form.Group>
-        //                             <br />
-        //                             <Form.Group className="mb-3">
-        //                                 <Button as="sub" variant="success" onClick={handleSubmit(shortenUrl)} >Submit</Button>
-        //                             </Form.Group>
-        //                         </Form>
-        //                     </div>
-        //                 </Modal.Body>
-        //                 <Modal.Footer>
-        //                     <Button variant="primary" onClick={handleSubmit(shortenUrl)} >Submit</Button>
-        //                     <Button variant="secondary" onClick={closeShortenURLModal}>Close</Button>
-        //                 </Modal.Footer>
-        //             </Modal>
-        //         </>
-        //     )
-        // };
-
         const getUserLinks = () => {
             fetch(`${baseUrl}/links/user`)
                 .then(response => response.json())
                 .then(data => {
                     // console.log(data.data)
-                    setLinks(data.data)
+                    setLinks(data.data);
                 })
                 .catch(error => console.log(error))
         };
@@ -194,15 +79,15 @@ const HomePage = () => {
                 .then(response => response.json())
                 .then(data => {
                     // console.log(data.data);
-                    const url = data.data
+                    const url = data.data;
                     setLink(url);
-                    console.log(url.title)
                     return url;
                 })
                 .catch(error => console.log(error))
         }
 
         const updateURL = (data) => {
+            console.log(data);
             const headers = new Headers({
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${JSON.parse(token)}`
@@ -215,11 +100,21 @@ const HomePage = () => {
             }
 
             fetch(`${baseUrl}/links/${linkId}`, requestOptions)
-                .then(response => response.json())
+                .then(response => {
+                    console.log(response.statusText);
+                    if (response.status === 409) {
+                        showModal();
+                    }
+                    return response.json()
+                })
                 .then(data => {
-                    console.log(data.data)
-                    const reload = window.location.reload()
-                    reload()
+                    console.log(data.data);
+                    // console.log(data.message);
+                    alert(data.message);
+                    navigate("/");
+                    // getUserLinks();
+                    getURL(data.data.id);
+                    closeModal();
                 })
                 .catch(error => console.log(error))
         }
@@ -239,10 +134,10 @@ const HomePage = () => {
                 .then(response => response.json())
                 .then(data => {
                     // console.log(data)
-                    alert(data)
-                    getUserLinks()
-                    const reload = window.location.reload()
-                    reload()
+                    alert(data);
+                    getUserLinks();
+                    // const reload = window.location.reload();
+                    // reload();
                 })
                 .catch(error => console.log(error))
         }
@@ -313,6 +208,17 @@ const HomePage = () => {
                 .catch(error => console.log(error))
         };
 
+        const copyURL = (link) => {
+            link = `${domain}/${link}`;
+            navigator.clipboard.writeText(link)
+                .then(() => {
+                    console.log(`${link} copied to clipboard`);
+                })
+                .catch((error) => {
+                    console.error('Error copying string to clipboard:', error);
+                });
+        };
+
         return (
             <>
                 <Modal
@@ -343,7 +249,10 @@ const HomePage = () => {
                             <Form.Group className="mb-3">
                                 <Form.Label>Long URL</Form.Label>
                                 <Form.Control type="text" placeholder="Example: https://... or http://..."
-                                    {...register("long_url", { required: { value: true, message: "Long URL is required." } })}
+                                    {...register("long_url", {
+                                        required: { value: true, message: "Long URL is required" },
+                                        pattern: { value: urlRegex, message: "URL must start with: 'https://' or 'http://'" }
+                                    })}
                                 />
                                 <Form.Text className="text-muted">
                                     Start with: https://... or http://...
@@ -433,6 +342,7 @@ const HomePage = () => {
                                         onDelete={() => deleteURL(link.id)}
                                         onGenerateQR={() => generateQRCode(link.id)}
                                         onRemoveQR={() => removeQRCode(link.id)}
+                                        onCopy={() => copyURL(link.short_url)}
                                     />
                                 }
                             </div>
@@ -446,8 +356,8 @@ const HomePage = () => {
     const LoggedOutHome = () => {
         return (
             <>
-                <Link to="/signup" className="btn btn-success m-1">Sign-up Here to Get Started</Link>
-                <Link to="/login" className="btn btn-success m-1">Log-in Here to Shorten Your URL</Link>
+                <Link to="/signup" className="btn btn-success m-1">Sign-up here to Get Started</Link>
+                <Link to="/login" className="btn btn-success m-1">Log-in here to Shorten Your URL</Link>
             </>
         )
     };

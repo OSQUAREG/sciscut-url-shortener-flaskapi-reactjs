@@ -33,7 +33,6 @@ const LoginPage = () => {
 
         fetch(`${baseUrl}/auth/login`, requestOptions)
             .then(response => {
-                // console.log(response.statusText)
                 // console.log(response.status)
                 if (response.status === 201) {
                     navigate("/")
@@ -66,6 +65,7 @@ const LoginPage = () => {
                     :
                     <h1 className="">Login</h1>
                 }
+                <br/>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label className="form-label" >Email Address</Form.Label>

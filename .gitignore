@@ -5,7 +5,8 @@
 .env
 
 # ignore database
-db.sqlite3
+*.sqlite3
+*.db
 
 # others
 .vscode/

@@ -26,7 +26,7 @@ const LoggedOutLinks = () => {
         <>
             <Nav.Link className="nav-link" href="/">Home</Nav.Link>
             <Nav.Link className="nav-link" href="/features">Features</Nav.Link>
-            <Nav.Link className="nav-link" href="/signup">Sign up</Nav.Link>
+            <Nav.Link className="nav-link" href="/signup">Signup</Nav.Link>
             <Nav.Link className="nav-link" href="/login">Login</Nav.Link>
         </>
     )
@@ -40,6 +40,7 @@ const NavBar = () => {
     // const [userId, setUserId] = useState(0)
 
     let token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
+    // console.log(token)
     const requestOptions = {
         method: "GET",
         headers: { "Authorization": `Bearer ${JSON.parse(token)}` }
@@ -56,7 +57,7 @@ const NavBar = () => {
             })
             .then(data => {
                 setCurrentUser(data.data)
-                console.log(currentUser)
+                // console.log(currentUser)
             })
             .catch(error => console.log(error))
     }, []);
@@ -357,7 +358,7 @@ const NavBar = () => {
                                         <LoggedInUser />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu >
-                                        <Dropdown.Item style={{color:"green"}} onClick={() => showViewModal()}>View Profile</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: "green" }} onClick={() => showViewModal()}>View Profile</Dropdown.Item>
                                         <Dropdown.Item style={{ color: "green" }} onClick={() => showUpdateModal()}>Update Profile</Dropdown.Item>
                                         <Dropdown.Item style={{ color: "green" }} onClick={() => showChangePasswordModal()}>Change Password</Dropdown.Item>
                                         <Dropdown.Item style={{ color: "green" }} onClick={() => logoutUser()}>Log Out</Dropdown.Item>

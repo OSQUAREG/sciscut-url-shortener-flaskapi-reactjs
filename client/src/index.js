@@ -10,11 +10,14 @@ import SignupPage from './components/Signup';
 import LoginPage from './components/Login';
 import ShortenURLPage from './components/ShortenURL';
 import LogoutPage from './components/Logout';
+import RedirectLink from './components/Redirect';
 
 export const baseUrl = "http://localhost:5000";
+export const domain = "http://localhost:3000";
 export const usernameRegex = /^[a-zA-Z0-9_]{3,25}$/;
 export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 export const customUrlRegex = /^[a-zA-Z0-9_]{5,20}$/;
+export const urlRegex = /^(https?:\/\/)/;
 
 
 const App = () => {
@@ -23,7 +26,8 @@ const App = () => {
             <div className="">
                 <NavBar />
                 <Routes>
-                    <Route path="/logout/" element={<LogoutPage />} />
+                    <Route path="/:short_url" element={<RedirectLink />} />
+                    <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/shorten" element={<ShortenURLPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignupPage />} />

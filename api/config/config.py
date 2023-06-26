@@ -27,6 +27,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(base_dir, "db.sqlite3")
+    # SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(base_dir, "urls.db")
     DEBUG = True  
 
 

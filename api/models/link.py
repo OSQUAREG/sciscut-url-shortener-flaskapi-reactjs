@@ -7,6 +7,8 @@ import validators
 import qrcode
 from random import choices
 
+qr_code_folder_path = "client/public/qr_code_img"
+
 
 class Link(db.Model, DB_Func):
     __tablename__ = "links"
@@ -35,8 +37,8 @@ class Link(db.Model, DB_Func):
         """Validates the long URL to ensure that it is valid URL string."""
         if (
             validators.url(self.long_url)
-            or validators.url(f"http://{self.long_url}")
-            or validators.url(f"https://{self.long_url}")
+            # or validators.url(f"http://{self.long_url}")
+            # or validators.url(f"https://{self.long_url}")
         ):
             return True
         return False
@@ -54,7 +56,11 @@ class Link(db.Model, DB_Func):
             return short_url
 
     def reset_short_url(self):
-        self.short_url, self.is_custom = (self.qr_code_id, False) if self.qr_code_added else (self.generate_short_url(), False)
+        self.short_url, self.is_custom = (
+            (self.qr_code_id, False)
+            if self.qr_code_added
+            else (self.generate_short_url(), False)
+        )
 
     def generate_qr_code(self):
         """Genereates QR Code for the given long URL."""
@@ -72,22 +78,31 @@ class Link(db.Model, DB_Func):
             self.qr_code_id = (
                 self.short_url if not self.is_custom else self.generate_short_url()
             )
-            img.save(f"client/public/qr_code_img/{self.qr_code_id}.png")
+            img.save(f"{qr_code_folder_path}/{self.qr_code_id}.png")
 
     def remove_qr_code(self):
-        link = self.get_by_id(self.id)
-        img_path = f"client/public/qr_code_img/{self.qr_code_id}.png"
+        img_path = f"{qr_code_folder_path}/{self.qr_code_id}.png"
         # checks if file exist.
         if os.path.exists(img_path):
             # Delete the file
-            os.remove(img_path)
             self.qr_code_id = None
-            return True
-        else:
-            return False
+            os.remove(img_path)
+
+    def rename_qr_code(self):
+        if self.qr_code_added:
+            if (self.qr_code_id != self.short_url) and not self.is_custom:
+                old_img_name = f"{self.qr_code_id}.png"
+                new_img_name = f"{self.short_url}.png"
+
+                old_img_path = os.path.join(qr_code_folder_path, old_img_name)
+                new_img_path = os.path.join(qr_code_folder_path, new_img_name)
+
+                os.rename(old_img_path, new_img_path)
+                self.qr_code_id = self.short_url
 
     def validate_title_by_user(self, title: str, user_id: int):
         """Validates that new title does not already exist for current user."""
+        # if self.title == title:
         link = self.query.filter_by(title=title, user_id=user_id).first()
         return True if link else False
 
@@ -126,27 +141,19 @@ class Link(db.Model, DB_Func):
             else "http://" + long_url
         )
 
-        long_url_wo_http = (
-            long_url.split("//")[1]
-            if (long_url.startswith("http://") or long_url.startswith("https://"))
-            else long_url
-        )
+        # long_url_wo_http = (
+        #     long_url.split("//")[1]
+        #     if (long_url.startswith("http://") or long_url.startswith("https://"))
+        #     else long_url
+        # )
 
-        return (
-            cls.query.filter(
-                and_(
-                    or_(
-                        text("long_url = :long_url_wt_https"),
-                        text("long_url = :long_url_wt_http"),
-                        text("long_url = :long_url_wo_http"),
-                    ),
-                    cls.user_id == user_id,
+        return cls.query.filter(
+            and_(
+                or_(
+                    cls.long_url == long_url_wt_https,
+                    cls.long_url == long_url_wt_http,
+                    # cls.long_url == long_url_wo_http,
                 )
-            )
-            .params(
-                long_url_wt_http=long_url_wt_http,
-                long_url_wo_http=long_url_wo_http,
-                long_url_wt_https=long_url_wt_https,
-            )
-            .first()
-        )
+            ),
+            cls.user_id == user_id,
+        ).first()
