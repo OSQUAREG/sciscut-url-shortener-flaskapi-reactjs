@@ -26,12 +26,9 @@
 # print(long_url_wt_http)
 # print(long_url_wo_http)
 
-import os 
-base_dir = os.path.dirname(os.path.realpath(__file__))
-file = os.path.join(base_dir, "urls.db")
 
-# path = os.path.normpath(os.path.realpath(__file__))
-# print(path)
+import geocoder
 
-print(base_dir)
-print(file)
+location = geocoder.ip('me')
+print(location.lat, location.lng, location.country, location.state, location.city)
+

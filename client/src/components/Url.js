@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, Image } from 'react-bootstrap';
-import { baseUrl } from '..';
+import { domain } from '..';
 import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +13,7 @@ export const URL = ({ title, long_url, short_url, date_created, visits, is_custo
                 <Link className="link" onClick={onRetrieve}>
                     <Card.Body>
                         <Card.Title>{title ? title : long_url}</Card.Title>
-                        <Card.Link className='link'>{baseUrl}/{short_url}</Card.Link>
+                        <Card.Link className='link'>{domain}/{short_url}</Card.Link>
                         <Card.Text className="m-2 text-muted">
                             <small className="justify-content">Date: {date_created}  ||  Clicks: {visits}</small>
                         </Card.Text>
@@ -37,7 +37,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                 <h5><b>Long URL: </b> {long_url}</h5>
                 <div>
                     <h5>
-                        <b>Short URL: </b><Link to={`/${short_url}`} target="_blank" rel="noopener noreferrer">{baseUrl}/{short_url}</Link>{" "}
+                        <b>Short URL: </b><Link to={`/${short_url}`} target="_blank" rel="noopener noreferrer">{domain}/{short_url}</Link>{" "}
                         <Button className="btn btn-sm" variant="secondary" onClick={onCopy}>
                             <FontAwesomeIcon icon={faCopy} />
                             {" "}Copy
@@ -61,7 +61,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                 </h6>
                 {qr_code_added &&
                     <>
-                        <p>{qr_code_id}</p>
+                        {/* <p>{qr_code_id}</p> */}
                         <Image src={`/qr_code_img/${qr_code_id}.png`} rounded fluid />
                     </>
                 }

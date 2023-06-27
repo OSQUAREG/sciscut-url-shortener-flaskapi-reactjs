@@ -3,11 +3,24 @@ from werkzeug.security import generate_password_hash
 from ..utils import db
 import os
 from dotenv import load_dotenv
+from ..models.link import qr_code_folder_path
 
 load_dotenv()
 
 
+def empty_qr_folder(folder_path):
+    # Iterate over the contents of the folder
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        
+        # Check if the current item is a file
+        if os.path.isfile(file_path):
+            os.remove(file_path)  # Remove the file
+    
+    print(f"Folder '{folder_path}' emptied.")
+
 def drop_create_all():
+    empty_qr_folder(qr_code_folder_path)
     db.drop_all()
     db.create_all()
 
@@ -15,7 +28,7 @@ def drop_create_all():
 
     """creates an admin"""
     admin = User(
-        email="admin@osquaregtech.com",
+        email="osquaregtech@gmail.com",
         password_hash=generate_password_hash(admin_password),
         is_admin=True,
     )

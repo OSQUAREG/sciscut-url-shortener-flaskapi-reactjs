@@ -46,8 +46,7 @@ const LoginPage = () => {
 
                 login(data.access_token)
                 setShow(true)
-                const reload = window.location.reload()
-                reload()
+                alert(data.message)
             })
             .catch(error => console.log(error))
         reset();

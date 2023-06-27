@@ -50,3 +50,32 @@ link_response_model = links_ns.model(
         "data": fields.Nested(model=link_model, description="Response Data"),
     },
 )
+
+link_analytics_model = links_ns.model(
+    name="Link Analytics Model",
+    model={
+        "id": fields.Integer(description="Click Id"),
+        "link_id": fields.Integer(description="Link Id"),
+        "user_agent": fields.String(description="User Agent"),
+        "referrer": fields.String(description="Referrer"),
+        "ip_address": fields.String(description="IP Address"),
+        "latitude": fields.Float(description="Latitude"),
+        "longitude": fields.Float(description="Longitude"),
+        "country": fields.String(description="Country"),
+        "state": fields.String(description="State"),
+        "city": fields.String(description="City"),
+        "timezone": fields.String(description="Time Zone"),
+        "device_type": fields.String(description="Device Type"),
+        "operating_system": fields.String(description="Operating System"),
+        "browser": fields.String(description="Browser"),
+        "timestamp": fields.DateTime(description="Timestamp"),
+    },
+)
+
+link_analytics_response_model = links_ns.model(
+    name="Link Analytics Response Model",
+    model={
+        "message": fields.String(description="Response Message"),
+        "data": fields.Nested(model=link_analytics_model, description="Response Data"),
+    },
+)

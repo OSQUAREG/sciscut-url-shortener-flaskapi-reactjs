@@ -4,7 +4,7 @@ from flask_restx import Api, Namespace
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from .blocklist import BLOCKLIST
-from .models import User, Link
+from .models import User, Link, ClickAnalytic
 from .utils import db, cache, limiter
 from .utils.create_defaults import drop_create_all
 from .config.config import config_dict
@@ -32,6 +32,7 @@ def create_app(config=config_dict["dev"]):
 
     admin.add_view(MyModelView(User, db.session))
     admin.add_view(MyModelView(Link, db.session))
+    admin.add_view(MyModelView(ClickAnalytic, db.session))
     admin.add_link(LogoutMenuLink(name='Logout'))
 
     # Initialize flask-migrate
@@ -97,6 +98,7 @@ def create_app(config=config_dict["dev"]):
             "db": db,
             "User": User,
             "Link": Link,
+            "ClickAnalytic": ClickAnalytic,
             "drop_create_all": drop_create_all,
         }
 

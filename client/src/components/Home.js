@@ -66,7 +66,7 @@ const HomePage = () => {
 
         const getURL = (id) => {
             const headers = new Headers({
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
                 "Authorization": `Bearer ${JSON.parse(token)}`
             });
 
@@ -84,7 +84,7 @@ const HomePage = () => {
                     return url;
                 })
                 .catch(error => console.log(error))
-        }
+        };
 
         const updateURL = (data) => {
             console.log(data);
@@ -101,7 +101,7 @@ const HomePage = () => {
 
             fetch(`${baseUrl}/links/${linkId}`, requestOptions)
                 .then(response => {
-                    console.log(response.statusText);
+                    // console.log(response.statusText);
                     if (response.status === 409) {
                         showModal();
                     }

@@ -1,12 +1,13 @@
-from flask import make_response, redirect, request
+from datetime import datetime
+import geocoder
+from flask import request
 from flask_restx import Resource, abort
-from ..models import Link
+from ..models import Link, ClickAnalytic
 from ..utils import cache, limiter
 from flask_jwt_extended import current_user, jwt_required
-from ..serializers.link import link_response_model, add_link_model, update_link_model
+from ..serializers.link import link_response_model, add_link_model, update_link_model, link_analytics_response_model
 from ..views import links_ns
 from http import HTTPStatus
-
 from ..utils import cache, limiter
 
 
@@ -80,7 +81,7 @@ class ShortenLink(Resource):
 
 @links_ns.route("/<short_url>")
 class RedirectLink(Resource):
-    @cache.cached(timeout=50)
+    # @cache.cached(timeout=50)
     @links_ns.doc(
         description="Redirect Shortened URL",
         params={"short_url": "Shortened or Customized URL"},
@@ -88,15 +89,42 @@ class RedirectLink(Resource):
     def get(self, short_url: str):
         """Redirect Shortened URL to the Long URL"""
         link = Link.get_link_by_short_url(short_url)
-        link.visits += 1
+        if link is None:
+            abort(HTTPStatus.NOT_FOUND, message="Invalid Short URL")
+        link.visits = link.visits + 1
         link.update_db()
 
-        message = "URL Redirected successfully."
-        # long_url = request.host_url + link.long_url  # Append the host URL to the long URL
-        long_url = link.long_url
-        print("\n\n", long_url, "\n\n")
+        ip_address = request.remote_addr
+        location = geocoder.ip(ip_address)
+
+        new_click = ClickAnalytic(
+            link_id = link.id,
+            user_agent = request.user_agent.string,
+            referrer = request.referrer,
+            
+            # Geolocation info
+            ip_address = ip_address,
+            latitude = location.lat if location else None,
+            longitude = location.lng if location else None,
+            country = location.country if location else None,
+            state = location.state if location else None,
+            city = location.city if location else None,
+            
+            # Device info
+            device_type = request.user_agent.platform,
+            operating_system = request.user_agent.platform,
+            browser = request.user_agent.browser
+            )
+        new_click.save_to_db()
+
         
-        # return redirect(long_url, HTTPStatus.PERMANENT_REDIRECT)
+        # location = geocoder.ip('192.168.121.140')
+        # print("\n\n\n LOCATION", location.lat, location.lng, location.country, location.state, location.city ,"\n\n\n")
+
+        # print("\n\n host: FINDING IT" "\n\n")
+
+        message = "URL Redirected successfully."
+        long_url = link.long_url
 
         response = {"message": message, "data": long_url}
         return response, HTTPStatus.PERMANENT_REDIRECT
@@ -262,9 +290,9 @@ class GetUpdateDeleteLink(Resource):
                 data.get("long_url"), current_user.id
             ) if link.long_url != data.get(link.long_url) else None
 
-        if link.long_url == data.get("long_url"):
+        if (link.long_url == data.get("long_url")) or (link.long_url.split("//")[1] == data.get("long_url").split("//")[1]):
             # retains the current long URL.
-            link.long_url = link.long_url
+            link.long_url = data.get("long_url")
         elif link_with_long_url:
             message = f"The provided long URL '{link_with_long_url.long_url}' is already shortened by you."
             response = {"message": message, "data": link_with_long_url}
@@ -295,3 +323,30 @@ class GetUpdateDeleteLink(Resource):
         link.delete_from_db()
         message = f"Link '{link.title}' deleted successfully."
         return message, HTTPStatus.OK
+
+
+@links_ns.route("/analytics/<int:link_id>")
+class ClickAnalytics(Resource):
+    @links_ns.marshal_with(link_analytics_response_model)
+    @jwt_required()
+    def get(self, link_id):
+        """Get Clicks for Link by Id"""
+        link_clicks = ClickAnalytic.get_clicks_by_link_id(link_id)
+
+        message = f"{len(link_clicks)} link clicks retrieved successfully."
+        response = {"message": message, "data": link_clicks}
+        return response, HTTPStatus.OK
+
+
+# @links_ns.route("/analytics/<int:link_id>")
+# class LinkAnalytics(Resource):
+#     @links_ns.marshal_with(link_analytics_response_model)
+#     @jwt_required()
+#     def get(self, link_id):
+#         """Get Clicks for Link by Id"""
+#         link_clicks = ClickAnalytic.get_clicks_by_link_id(link_id)
+
+#         message = f"{len(link_clicks)} link clicks retrieved successfully."
+#         response = {"message": message, "data": link_clicks}
+#         return response, HTTPStatus.OK
+

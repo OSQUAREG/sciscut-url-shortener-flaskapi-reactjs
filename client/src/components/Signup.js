@@ -37,6 +37,7 @@ const SignupPage = () => {
                 setServerResponse(data.message)
                 // console.log(serverResponse)
                 setShow(true)
+                alert(data.message)
             })
             .catch(error => console.log(error))
         reset();

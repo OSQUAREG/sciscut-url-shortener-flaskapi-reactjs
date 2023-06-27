@@ -42,6 +42,8 @@ const ShortenURLPage = () => {
                 setServerResponse(data.message)
                 // console.log(data.status)
                 setShow(true)
+                navigate("/")
+                alert(data.message)
             })
             .catch(error => console.log(error))
 

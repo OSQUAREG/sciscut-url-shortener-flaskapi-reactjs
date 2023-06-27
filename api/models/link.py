@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import and_, or_, text
+from sqlalchemy import and_, func, or_, text
 from ..utils import db, DB_Func
 from datetime import datetime
 import string
@@ -25,6 +25,7 @@ class Link(db.Model, DB_Func):
     date_modified = db.Column(db.Date, onupdate=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    clicks = db.relationship("ClickAnalytic", backref="link")
 
     def __repr__(self):
         return f"<Title: {self.title}>"
@@ -37,8 +38,6 @@ class Link(db.Model, DB_Func):
         """Validates the long URL to ensure that it is valid URL string."""
         if (
             validators.url(self.long_url)
-            # or validators.url(f"http://{self.long_url}")
-            # or validators.url(f"https://{self.long_url}")
         ):
             return True
         return False
@@ -141,19 +140,71 @@ class Link(db.Model, DB_Func):
             else "http://" + long_url
         )
 
-        # long_url_wo_http = (
-        #     long_url.split("//")[1]
-        #     if (long_url.startswith("http://") or long_url.startswith("https://"))
-        #     else long_url
-        # )
-
         return cls.query.filter(
             and_(
                 or_(
                     cls.long_url == long_url_wt_https,
                     cls.long_url == long_url_wt_http,
-                    # cls.long_url == long_url_wo_http,
                 )
             ),
             cls.user_id == user_id,
         ).first()
+
+
+class ClickAnalytic(db.Model, DB_Func):
+    __tablename__ = "click_analytics"
+
+    id = db.Column(db.Integer, primary_key=True)
+    link_id = db.Column(db.Integer, db.ForeignKey("links.id"), nullable=False)
+    user_agent = db.Column(db.String)
+    referrer = db.Column(db.String)
+    timestamp = db.Column(db.DateTime, default=datetime.now)
+
+    # Geolocation info
+    ip_address = db.Column(db.String)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    country = db.Column(db.String)
+    state = db.Column(db.String)
+    city = db.Column(db.String)
+    # timezone = db.Column(db.String)
+
+    # Device info
+    device_type = db.Column(db.String)
+    operating_system = db.Column(db.String)
+    browser = db.Column(db.String)
+
+    def __init__(self, link_id, user_agent, referrer, ip_address, latitude, longitude,
+                country, state, city, device_type, operating_system, browser):
+        self.link_id = link_id
+        self.user_agent = user_agent
+        self.referrer = referrer
+        self.ip_address = ip_address
+        self.latitude = latitude
+        self.longitude = longitude
+        self.country = country
+        self.state = state
+        self.city = city
+        # self.timezone = timezone
+        self.device_type = device_type
+        self.operating_system = operating_system
+        self.browser = browser
+
+    def __repr__(self):
+        return f"<Click(link_id={self.link_id}, timestamp={self.timestamp})>"
+
+    def get_clicks_by_link_id(self, link_id):
+        """Gets a list of clicks by link_id"""
+        return self.query.filter_by(link_id=link_id).all()
+
+    def count_clicks_by_link_id(self, link_id):
+        """Counts the number of clicks by link_id"""
+        return self.query.filter_by(link_id=link_id).count()
+
+    @classmethod
+    def get_clicks_counts_by_link_id(cls):
+        clicks_counts = db.session.query(
+            cls.link_id, 
+            (func.count(cls.id)).label("clicks_count"),
+        ).all()
+        return clicks_counts
