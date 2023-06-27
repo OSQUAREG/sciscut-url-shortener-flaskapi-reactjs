@@ -27,8 +27,13 @@
 # print(long_url_wo_http)
 
 
+# location = geocoder.ip('192.168.121.140')
+# print("\n\n\n LOCATION", location.lat, location.lng, location.country, location.state, location.city ,"\n\n\n")
+
+# print("\n\n host: FINDING IT" "\n\n")
+
+
 import geocoder
 
-location = geocoder.ip('me')
+location = geocoder.ip("me")
 print(location.lat, location.lng, location.country, location.state, location.city)
-

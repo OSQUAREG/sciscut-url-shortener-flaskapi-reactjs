@@ -8,16 +8,16 @@ const RedirectLink = () => {
     const [longLink, setLongLink] = useState("");
 
     useEffect(() => {
-    fetch(`${baseUrl}/links/${short_url}`)
+        fetch(`${baseUrl}/links/${short_url}`)
             .then(response => {
                 console.log(response.status);
                 return response.json()
             })
             .then(data => {
-                // console.log(data.data);
+                console.log(data.data);
                 setLongLink(data.data);
-                window.location.replace(data.data);
-                // alert(data.message);
+                // window.location.replace(data.data);
+                alert(data.message);
             })
             .catch((error) => {
                 console.error('Error redirecting:', error);

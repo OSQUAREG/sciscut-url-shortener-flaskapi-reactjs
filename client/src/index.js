@@ -11,6 +11,7 @@ import LoginPage from './components/Login';
 import ShortenURLPage from './components/ShortenURL';
 import LogoutPage from './components/Logout';
 import RedirectLink from './components/Redirect';
+import FeaturePage from './components/Features';
 
 export const baseUrl = "http://localhost:5000";
 export const domain = "http://localhost:3000";
@@ -23,10 +24,11 @@ export const urlRegex = /^(https?:\/\/)/;
 const App = () => {
     return (
         <Router>
-            <div className="">
+            <div>
                 <NavBar />
                 <Routes>
                     <Route path="/:short_url" element={<RedirectLink />} />
+                    <Route path="/features" element={<FeaturePage />} />
                     <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/shorten" element={<ShortenURLPage />} />
                     <Route path="/login" element={<LoginPage />} />

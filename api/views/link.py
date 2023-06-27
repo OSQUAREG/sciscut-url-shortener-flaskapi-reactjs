@@ -1,11 +1,15 @@
-from datetime import datetime
 import geocoder
 from flask import request
 from flask_restx import Resource, abort
 from ..models import Link, ClickAnalytic
 from ..utils import cache, limiter
 from flask_jwt_extended import current_user, jwt_required
-from ..serializers.link import link_response_model, add_link_model, update_link_model, link_analytics_response_model
+from ..serializers.link import (
+    link_response_model,
+    add_link_model,
+    update_link_model,
+    link_analytics_response_model,
+)
 from ..views import links_ns
 from http import HTTPStatus
 from ..utils import cache, limiter
@@ -98,36 +102,28 @@ class RedirectLink(Resource):
         location = geocoder.ip(ip_address)
 
         new_click = ClickAnalytic(
-            link_id = link.id,
-            user_agent = request.user_agent.string,
-            referrer = request.referrer,
-            
+            link_id=link.id,
+            user_agent=request.user_agent.string,
+            referrer=request.referrer,
             # Geolocation info
-            ip_address = ip_address,
-            latitude = location.lat if location else None,
-            longitude = location.lng if location else None,
-            country = location.country if location else None,
-            state = location.state if location else None,
-            city = location.city if location else None,
-            
+            ip_address=ip_address,
+            latitude=location.lat if location else None,
+            longitude=location.lng if location else None,
+            country=location.country if location else None,
+            state=location.state if location else None,
+            city=location.city if location else None,
             # Device info
-            device_type = request.user_agent.platform,
-            operating_system = request.user_agent.platform,
-            browser = request.user_agent.browser
-            )
+            device_type=request.user_agent.platform,
+            operating_system=request.user_agent.platform,
+            browser=request.user_agent.browser,
+        )
         new_click.save_to_db()
 
-        
-        # location = geocoder.ip('192.168.121.140')
-        # print("\n\n\n LOCATION", location.lat, location.lng, location.country, location.state, location.city ,"\n\n\n")
-
-        # print("\n\n host: FINDING IT" "\n\n")
-
-        message = "URL Redirected successfully."
+        message = f"URL redirected successfully. Visits: {link.visits}. IP Address: {new_click.ip_address}"
         long_url = link.long_url
 
         response = {"message": message, "data": long_url}
-        return response, HTTPStatus.PERMANENT_REDIRECT
+        return response, HTTPStatus.OK
 
 
 @links_ns.route("/reset/<int:link_id>")
@@ -254,27 +250,31 @@ class GetUpdateDeleteLink(Resource):
 
         """Validating and updating the URL title"""
         # checks if new title is given and if it matches the current title
-        if (link.title == data.get("title")):
+        if link.title == data.get("title"):
             # retains the current title
             link.title = link.title
         # validates that the title is not already used by user
         elif link.validate_title_by_user(data.get("title"), current_user.id):
-            abort(HTTPStatus.CONFLICT, message=f"Title '{data.get('title')}' already used by you.")
+            abort(
+                HTTPStatus.CONFLICT,
+                message=f"Title '{data.get('title')}' already used by you.",
+            )
         else:
             # updates the title
             link.title = data.get("title")
-            
 
         """Validating and updating the Short URL and is_custom"""
         # checks if custom short URL is given and if it matches the current short URL and if is_custom is True
-        if (link.short_url == data.get("short_url")) and (link.is_custom == data.get("is_custom")):
+        if (link.short_url == data.get("short_url")) and (
+            link.is_custom == data.get("is_custom")
+        ):
             # retains the current short URL and is_custom
             link.short_url, link.is_custom = link.short_url, link.is_custom
-            
+
         # then checks if is_custom is False and generates a new short URL
         elif data.get("is_custom") == False:
             link.short_url, link.is_custom = link.reset_short_url()
-                
+
         # then checks if the given custom short URL is already used by user
         elif link.validate_short_url_by_user(data.get("short_url"), current_user.id):
             abort(HTTPStatus.CONFLICT, message="Short URL already used by you.")
@@ -282,15 +282,18 @@ class GetUpdateDeleteLink(Resource):
             # updates the short URL and is_custom set to True
             link.short_url, link.is_custom = data.get("short_url"), True
 
-
         """Validating and updating the Long URL"""
         # checks if new long URL is already shortened by user
-        
-        link_with_long_url = Link.get_link_by_long_url_user_id(
-                data.get("long_url"), current_user.id
-            ) if link.long_url != data.get(link.long_url) else None
 
-        if (link.long_url == data.get("long_url")) or (link.long_url.split("//")[1] == data.get("long_url").split("//")[1]):
+        link_with_long_url = (
+            Link.get_link_by_long_url_user_id(data.get("long_url"), current_user.id)
+            if link.long_url != data.get(link.long_url)
+            else None
+        )
+
+        if (link.long_url == data.get("long_url")) or (
+            link.long_url.split("//")[1] == data.get("long_url").split("//")[1]
+        ):
             # retains the current long URL.
             link.long_url = data.get("long_url")
         elif link_with_long_url:
@@ -349,4 +352,3 @@ class ClickAnalytics(Resource):
 #         message = f"{len(link_clicks)} link clicks retrieved successfully."
 #         response = {"message": message, "data": link_clicks}
 #         return response, HTTPStatus.OK
-
