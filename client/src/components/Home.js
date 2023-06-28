@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
 import { baseUrl, domain, urlRegex } from "..";
 import { URL, URLDetails } from "./Url";
-import { Button, Modal, Form, Container, Row, Col } from "react-bootstrap";
+import { Button, Modal, Form, Container, Row, Col, Image } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -368,13 +368,25 @@ const HomePage = () => {
 
     return (
         <>
-            {/* <ShortenURLModal /> */}
             <div className="home container">
-                <h1 className="heading">Welcome to <br /> <span style={{ color: "red", fontSize: "100px" }}>Scissor App</span></h1>
+                <Row>
+                    <Col xs={12} sm={6}>
+                        <h1 className="heading">
+                            Welcome to <br />
+                            <span style={{ color: "red", fontSize: "100px" }}>Scissor App</span>
+                        </h1>
+                        <br />
+                        <h5><i>...your favorite URL Shortener and QR Code Generator</i></h5>
+                        <br />
+                    </Col>
+                    <Col xs={12} sm={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <div>
+                            <Image src="/scissor-url-shortener3.png" rounded fluid />
+                        </div>
+                        <br />
+                    </Col>
+                </Row>
                 <br />
-                <h5><i>...your favorite URL Shortener and QR Code Generator</i></h5>
-                <br />
-
                 {logged ? <LoggedInHome /> : <LoggedOutHome />}
             </div>
         </>

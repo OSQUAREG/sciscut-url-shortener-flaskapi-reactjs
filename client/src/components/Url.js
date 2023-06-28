@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faRefresh, faEdit, faChartBar, faRemove, faQrcode, faTrash, faDownload } from '@fortawesome/free-solid-svg-icons';
-import AnalyticsPage from './Analytics';
 
 export const URL = ({ title, long_url, short_url, date_created, visits, onRetrieve }) => {
     return (

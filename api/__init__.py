@@ -24,8 +24,8 @@ from api.admin.admin_views import MyAdminIndexView, MyModelView, LogoutMenuLink
 from flask_cors import CORS
 
 
-def create_app(config=config_dict["prod"]):
-    app = Flask(__name__)
+def create_app(config=config_dict["dev"]):
+    app = Flask(__name__, static_url_path="/", static_folder="./client/build")
     app.config.from_object(config)
     db.init_app(app)
     cache.init_app(app)
@@ -122,11 +122,19 @@ def create_app(config=config_dict["prod"]):
             "qr_folder": qr_code_folder_path,
         }
 
-    @app.route("/home")
+    @app.route("/")
     def index():
+        return app.send_static_file("index.html")
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return app.send_static_file("index.html")
+
+    @app.route("/home")
+    def home():
         return render_template("index.html")
 
-    # Flask views
+    # Flask Admin Views
     @app.route("/")
     def admin_index():
         return render_template("index.html")

@@ -35,7 +35,7 @@ const LoginPage = () => {
             body: JSON.stringify(data)
         }
 
-        fetch(`${baseUrl}/auth/login`, requestOptions)
+        fetch(`/auth/login`, requestOptions)
             .then(response => {
                 // console.log(response.status)
                 if (response.status === 201) {
@@ -54,7 +54,7 @@ const LoginPage = () => {
                 alert(data.message)
             })
             .catch(error => console.log(error))
-        
+
     }
     return (
         <div className="login container">
@@ -69,7 +69,7 @@ const LoginPage = () => {
                     :
                     <h1 className="">Login</h1>
                 }
-                <br/>
+                <br />
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label className="form-label" >Email Address</Form.Label>
