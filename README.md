@@ -25,4 +25,4 @@ Users can also generate QR Codes for their links and downloaded for external use
 
 #### Click Analytics
 
-You can also track information on how your URLs are used with every click.
+You can also track information on how and where your URLs are being used with every click.
