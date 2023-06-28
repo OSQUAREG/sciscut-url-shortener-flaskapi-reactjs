@@ -165,7 +165,6 @@ class ClickAnalytic(db.Model, DB_Func):
     country = db.Column(db.String)
     state = db.Column(db.String)
     city = db.Column(db.String)
-    # timezone = db.Column(db.String)
 
     # Device info
     device_type = db.Column(db.String)
@@ -196,7 +195,6 @@ class ClickAnalytic(db.Model, DB_Func):
         self.country = country
         self.state = state
         self.city = city
-        # self.timezone = timezone
         self.device_type = device_type
         self.operating_system = operating_system
         self.browser = browser

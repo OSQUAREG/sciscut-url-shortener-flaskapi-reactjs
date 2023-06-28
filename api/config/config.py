@@ -19,8 +19,8 @@ class Config:
     CACHE_DEFAULT_TIMEOUT = 300
 
     # RATELIMIT_DEFAULT = [
-    #     "10 per day", 
-    #     "3 per hour", 
+    #     "10 per day",
+    #     "3 per hour",
     #     # exempt_when=lambda: current_user.is_admin,
     # ]
 
@@ -28,7 +28,7 @@ class Config:
 class DevelopmentConfig(Config):
     # SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(base_dir, "db.sqlite3")
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(base_dir, "urls.db")
-    DEBUG = True  
+    DEBUG = True
 
 
 class TestingConfig(Config):
@@ -38,17 +38,14 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    uri = config("DATABASE_URL")
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
+    # uri = config("DATABASE_URL")
+    # if uri.startswith("postgres://"):
+    #     uri = uri.replace("postgres://", "postgresql://", 1)
+    # SQLALCHEMY_DATABASE_URI = uri
 
-    SQLALCHEMY_DATABASE_URI = uri
+    SQLALCHEMY_DATABASE_URI = config("DATABASE_URL")
     DEBUG = config("DEBUG", False, cast=bool)
     SQLALCHEMY_ECHO = False
 
 
-config_dict = dict(
-    dev=DevelopmentConfig,
-    test=TestingConfig,
-    prod=ProductionConfig
-)
+config_dict = dict(dev=DevelopmentConfig, test=TestingConfig, prod=ProductionConfig)
