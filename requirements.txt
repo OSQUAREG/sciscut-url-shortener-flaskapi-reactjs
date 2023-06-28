@@ -61,6 +61,6 @@ SQLAlchemy==2.0.13
 typing_extensions==4.5.0
 urllib3==2.0.2
 validators==0.20.0
-Werkzeug==2.3.4
+Werkzeug
 wrapt==1.15.0
 WTForms==3.0.1
