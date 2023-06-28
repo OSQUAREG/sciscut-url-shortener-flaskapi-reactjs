@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
 import { baseUrl, domain, urlRegex } from "..";
 import { URL, URLDetails } from "./Url";
-import { Button, Modal, Form, Container, Row, Col} from "react-bootstrap";
+import { Button, Modal, Form, Container, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-// import RedirectLink from "./Redirect";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCut } from '@fortawesome/free-solid-svg-icons';
 
 
 const HomePage = () => {
@@ -15,6 +17,7 @@ const HomePage = () => {
     const LoggedInHome = () => {
         const [links, setLinks] = useState([]);
         const [link, setLink] = useState();
+        // const [clicks, setClicks] = useState([]);
         const [show, setShow] = useState(false);
         const { register, handleSubmit, setValue, formState: { errors } } = useForm();
         const [linkId, setLinkId] = useState(0);
@@ -79,9 +82,7 @@ const HomePage = () => {
                 .then(response => response.json())
                 .then(data => {
                     // console.log(data.data);
-                    const url = data.data;
-                    setLink(url);
-                    return url;
+                    setLink(data.data);
                 })
                 .catch(error => console.log(error))
         };
@@ -195,20 +196,20 @@ const HomePage = () => {
             const requestOptions = {
                 method: "PATCH",
                 headers: headers,
-            }
+            };
 
             fetch(`${baseUrl}/links/reset/${id}`, requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
-                    alert(data.message)
+                    console.log(data.data);
+                    alert(data.message);
                     // const reload = window.location.reload()
                     // reload()
                 })
                 .catch(error => console.log(error))
         };
 
-        const copyURL = (link) => {
+        const copyShortURL = (link) => {
             link = `${domain}/${link}`;
             navigator.clipboard.writeText(link)
                 .then(() => {
@@ -291,63 +292,66 @@ const HomePage = () => {
                 </Modal>
 
                 <Container>
-                    <Row>
-                        <Col xs={12} sm={5} className="mb-3 boxShadow" >
-                            {links.length > 0 &&
-                                <>
-                                    <Button className="mb-3" variant="success" href="/shorten">Create New Short URL</Button>
-                                    <h2 className="mb-3">Your URL Lists</h2>
-                                </>
-                            }
-                            {links && links.length > 0 ? (
-                                <>
-                                    {links.map((link, index) => (
-                                        <URL
-                                            key={index}
-                                            title={link.title}
-                                            long_url={link.long_url}
-                                            short_url={link.short_url}
-                                            date_created={link.date_created}
-                                            visits={link.visits}
-                                            is_custom={link.is_custom}
-                                            onRetrieve={() => getURL(link.id)}
-                                        />
-                                    ))}
+                    {links.length > 0 &&
+                        <>
+                            <Button className="mb-3" variant="success" href="/shorten"><FontAwesomeIcon icon={faCut} />{" "}Shorten New URL</Button>
+                        </>
+                    }
+                    {links && links.length > 0 ? (
+                        <>
+                            <Row>
+                                <Col xs={12} sm={5} className="mb-3 boxShadow" >
+                                    <h2 className="mb-3">Your Short URLs List</h2>
+                                    <div className="scrollable-container">
+                                        {links.map((link, index) => (
+                                            <URL
+                                                key={index}
+                                                title={link?.title}
+                                                long_url={link?.long_url}
+                                                short_url={link?.short_url}
+                                                date_created={link?.date_created}
+                                                visits={link?.visits}
+                                                is_custom={link?.is_custom}
+                                                onRetrieve={() => getURL(link?.id)}
+                                            />
+                                        ))}
+                                    </div>
                                     < br />
-                                    <Button className="mb-5" variant="success" href="/shorten">Create New Short URL</Button>
-                                </>
-                            ) : (
-                                <>
-                                    <h3>No Short URLs available yet. </h3>
-                                    <br />
-                                    <Link className="btn btn-lg btn-success" to="/shorten">Create Your First Short URL.</Link>
-                                </>
-                            )}
-                        </Col>
-                        <Col xs={12} sm={7} className="mb-3 boxShadow" >
-                            <div >
-                                {link &&
-                                    <URLDetails
-                                        id={link.id}
-                                        title={link.title}
-                                        long_url={link.long_url}
-                                        short_url={link.short_url}
-                                        visits={link.visits}
-                                        is_custom={link.is_custom}
-                                        date_created={link.date_created}
-                                        qr_code_added={link.qr_code_added}
-                                        qr_code_id={link.qr_code_id}
-                                        onUpdate={() => showModal(link.id)}
-                                        onReset={() => resetShortURL(link.id)}
-                                        onDelete={() => deleteURL(link.id)}
-                                        onGenerateQR={() => generateQRCode(link.id)}
-                                        onRemoveQR={() => removeQRCode(link.id)}
-                                        onCopy={() => copyURL(link.short_url)}
-                                    />
-                                }
-                            </div>
-                        </Col>
-                    </Row>
+                                    <Button className="mb-3" variant="success" href="/shorten"><FontAwesomeIcon icon={faCut} />{" "}Shorten New URL</Button>
+                                </Col>
+                                <Col xs={12} sm={7} className="mb-3 boxShadow" >
+                                    <h2 className="mb-3">Short URL Details</h2>
+                                    <div >
+                                        {link &&
+                                            <URLDetails
+                                                id={link.id}
+                                                title={link?.title}
+                                                long_url={link?.long_url}
+                                                short_url={link?.short_url}
+                                                visits={link?.visits}
+                                                is_custom={link?.is_custom}
+                                                date_created={link?.date_created}
+                                                qr_code_added={link?.qr_code_added}
+                                                qr_code_id={link?.qr_code_id}
+                                                onUpdate={() => showModal(link?.id)}
+                                                onReset={() => resetShortURL(link?.id)}
+                                                onDelete={() => deleteURL(link?.id)}
+                                                onGenerateQR={() => generateQRCode(link?.id)}
+                                                onRemoveQR={() => removeQRCode(link?.id)}
+                                                onCopy={() => copyShortURL(link?.short_url)}
+                                            />
+                                        }
+                                    </div>
+                                </Col>
+                            </Row>
+                        </>
+                    ) : (
+                        <>
+                            <h3>No Short URLs available yet. </h3>
+                            <br />
+                            <Link className="btn btn-lg btn-success" to="/shorten"><FontAwesomeIcon icon={faCut} />{" "}Shorten Your First URL.</Link>
+                        </>
+                    )}
                 </Container>
             </>
         )

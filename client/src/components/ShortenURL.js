@@ -76,7 +76,7 @@ const ShortenURLPage = () => {
                         <Form.Label>Long URL</Form.Label>
                         <Form.Control type="text" placeholder="Enter your long URL"
                             {...register("long_url", {
-                                required: { value: true, message: "Long URL is required"},
+                                required: { value: true, message: "Long URL is required" },
                                 pattern: { value: urlRegex, message: "URL must start with: 'https://' or 'http://'" }
                             })}
                         />
@@ -84,7 +84,7 @@ const ShortenURLPage = () => {
                             Start with: https://... or http://...
                         </Form.Text>
                         <br />
-                        {errors.long_url && <small style={{ color: "red" }}>{errors.long_url.message }</small>}
+                        {errors.long_url && <small style={{ color: "red" }}>{errors.long_url.message}</small>}
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

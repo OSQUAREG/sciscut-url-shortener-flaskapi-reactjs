@@ -48,7 +48,7 @@ class UserLogin(Resource):
 
         user = User.query.filter_by(email=email).first()
         if not(user and user.check_pwd_hash(password)):
-            abort(HTTPStatus.UNAUTHORIZED, message="Invalid email or password.")
+            abort(HTTPStatus.UNAUTHORIZED, message="Invalid email or password. Pleaase try again.")
             
         access_token = create_access_token(identity=user.email)
         refresh_token = create_refresh_token(identity=user.email)

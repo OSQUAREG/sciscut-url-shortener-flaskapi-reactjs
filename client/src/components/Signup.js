@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { baseUrl, emailRegex } from "..";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPlus} from '@fortawesome/free-solid-svg-icons';
+
 const SignupPage = () => {
 
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
@@ -91,8 +94,6 @@ const SignupPage = () => {
                         <Form.Control type="password" placeholder="Confirm your password"
                             {...register("confirmPassword", {
                                 required: { value: true, message: "Confirm Password is required." },
-                                // minLength: { value: 8, message: "Password must be at least 8 characters." },
-                                // maxLength: { value: 25, message: "Password must not exceed 25 characters." },
                                 validate: (value) => value === watch("password") || "Passwords do not match"
                             })}
                         />
@@ -100,7 +101,7 @@ const SignupPage = () => {
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">
-                        <Button as="sub" variant="success" onClick={handleSubmit(submitForm)} >Sign Up</Button>
+                        <Button as="sub" variant="success" onClick={handleSubmit(submitForm)} ><FontAwesomeIcon icon={faUserPlus} />{" "}Sign Up</Button>
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

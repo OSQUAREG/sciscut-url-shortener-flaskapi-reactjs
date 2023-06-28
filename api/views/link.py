@@ -13,6 +13,7 @@ from ..serializers.link import (
 from ..views import links_ns
 from http import HTTPStatus
 from ..utils import cache, limiter
+from ..utils import db
 
 
 @links_ns.route("/shorten")
@@ -331,24 +332,19 @@ class GetUpdateDeleteLink(Resource):
 @links_ns.route("/analytics/<int:link_id>")
 class ClickAnalytics(Resource):
     @links_ns.marshal_with(link_analytics_response_model)
+    @links_ns.doc(
+        description="Click Analytics for Single Link", params={"link_id": "Link ID"}
+    )
     @jwt_required()
     def get(self, link_id):
-        """Get Clicks for Link by Id"""
-        link_clicks = ClickAnalytic.get_clicks_by_link_id(link_id)
+        """Get Clicks Analytics for Single Link by Id"""
+        click_analytics = (
+            db.session.query(ClickAnalytic)
+            .outerjoin(Link, Link.id == ClickAnalytic.link_id)
+            .filter(ClickAnalytic.link_id == link_id)
+            .all()
+        )
 
-        message = f"{len(link_clicks)} link clicks retrieved successfully."
-        response = {"message": message, "data": link_clicks}
+        message = f"{len(click_analytics)} link clicks retrieved successfully."
+        response = {"message": message, "data": click_analytics}
         return response, HTTPStatus.OK
-
-
-# @links_ns.route("/analytics/<int:link_id>")
-# class LinkAnalytics(Resource):
-#     @links_ns.marshal_with(link_analytics_response_model)
-#     @jwt_required()
-#     def get(self, link_id):
-#         """Get Clicks for Link by Id"""
-#         link_clicks = ClickAnalytic.get_clicks_by_link_id(link_id)
-
-#         message = f"{len(link_clicks)} link clicks retrieved successfully."
-#         response = {"message": message, "data": link_clicks}
-#         return response, HTTPStatus.OK

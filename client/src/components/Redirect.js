@@ -15,8 +15,9 @@ const RedirectLink = () => {
             })
             .then(data => {
                 console.log(data.data);
+                console.log(data.message);
                 setLongLink(data.data);
-                // window.location.replace(data.data);
+                window.location.replace(data.data);
                 alert(data.message);
             })
             .catch((error) => {

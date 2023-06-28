@@ -1,6 +1,6 @@
 .container {
     margin-top: 30px;
-    padding: 0 50px;
+    padding: 0 30px;
 }
 
 .heading {
@@ -38,4 +38,9 @@
 
 .card {
     background-color: rgb(220, 248, 220);
+}
+
+.scrollable-container {
+    overflow-y: auto;
+    max-height: 1000px;
 }

@@ -16,8 +16,11 @@ change_password_model = user_ns.model(
     model={
         "old_password": fields.String(description="Old Password", required=True),
         "new_password": fields.String(description="New Password", required=True),
-        "confirm_password": fields.String(description="Confirm Password", required=True),}
-    )
+        "confirm_password": fields.String(
+            description="Confirm Password", required=True
+        ),
+    },
+)
 
 user_update_model = user_ns.model(
     name="User Update Model",
@@ -30,6 +33,14 @@ user_update_model = user_ns.model(
 
 
 """OUTPUT MODELS"""
+links_model = user_ns.model(
+    name="Links Models",
+    model={
+        "title": fields.String(description="Titel"),
+        "long_url": fields.String(description="Long URL"),
+    },
+)
+
 user_detail_model = user_ns.model(
     name="User Detail Model",
     model={
@@ -39,6 +50,7 @@ user_detail_model = user_ns.model(
         "is_admin": fields.Boolean(description="Is Admin?"),
         "date_created": fields.DateTime(description="Date Created"),
         "date_modified": fields.DateTime(description="Date Modified"),
+        "links": fields.Nested(model=links_model, description="Links"),
     },
 )
 
@@ -59,4 +71,3 @@ user_resp_logged_model = user_ns.model(
         "refresh_token": fields.String(description="Refresh Token"),
     },
 )
-

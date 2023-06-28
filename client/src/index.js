@@ -9,9 +9,10 @@ import HomePage from './components/Home';
 import SignupPage from './components/Signup';
 import LoginPage from './components/Login';
 import ShortenURLPage from './components/ShortenURL';
-import LogoutPage from './components/Logout';
 import RedirectLink from './components/Redirect';
 import FeaturePage from './components/Features';
+import AnalyticsPage from './components/Analytics';
+import Footer from './components/Footer';
 
 export const baseUrl = "http://localhost:5000";
 export const domain = "http://localhost:3000";
@@ -28,13 +29,14 @@ const App = () => {
                 <NavBar />
                 <Routes>
                     <Route path="/:short_url" element={<RedirectLink />} />
+                    <Route path="/analytics/:link_id" element={<AnalyticsPage />} />
                     <Route path="/features" element={<FeaturePage />} />
-                    <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/shorten" element={<ShortenURLPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignupPage />} />
                     <Route path="/" element={<HomePage />} />
                 </Routes>
+                <Footer />
             </div>
         </Router>
     )

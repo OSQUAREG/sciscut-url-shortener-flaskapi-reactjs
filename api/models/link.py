@@ -36,9 +36,7 @@ class Link(db.Model, DB_Func):
 
     def validate_long_url(self):
         """Validates the long URL to ensure that it is valid URL string."""
-        if (
-            validators.url(self.long_url)
-        ):
+        if validators.url(self.long_url):
             return True
         return False
 
@@ -174,8 +172,21 @@ class ClickAnalytic(db.Model, DB_Func):
     operating_system = db.Column(db.String)
     browser = db.Column(db.String)
 
-    def __init__(self, link_id, user_agent, referrer, ip_address, latitude, longitude,
-                country, state, city, device_type, operating_system, browser):
+    def __init__(
+        self,
+        link_id,
+        user_agent,
+        referrer,
+        ip_address,
+        latitude,
+        longitude,
+        country,
+        state,
+        city,
+        device_type,
+        operating_system,
+        browser,
+    ):
         self.link_id = link_id
         self.user_agent = user_agent
         self.referrer = referrer
@@ -193,10 +204,6 @@ class ClickAnalytic(db.Model, DB_Func):
     def __repr__(self):
         return f"<Click(link_id={self.link_id}, timestamp={self.timestamp})>"
 
-    def get_clicks_by_link_id(self, link_id):
-        """Gets a list of clicks by link_id"""
-        return self.query.filter_by(link_id=link_id).all()
-
     def count_clicks_by_link_id(self, link_id):
         """Counts the number of clicks by link_id"""
         return self.query.filter_by(link_id=link_id).count()
@@ -204,7 +211,7 @@ class ClickAnalytic(db.Model, DB_Func):
     @classmethod
     def get_clicks_counts_by_link_id(cls):
         clicks_counts = db.session.query(
-            cls.link_id, 
+            cls.link_id,
             (func.count(cls.id)).label("clicks_count"),
         ).all()
         return clicks_counts

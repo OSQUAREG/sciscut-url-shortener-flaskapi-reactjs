@@ -6,6 +6,10 @@ import { baseUrl } from "..";
 import { login } from "../auth";
 import { useNavigate } from "react-router-dom"
 
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignIn } from '@fortawesome/free-solid-svg-icons';
+
 const LoginPage = () => {
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -36,6 +40,7 @@ const LoginPage = () => {
                 // console.log(response.status)
                 if (response.status === 201) {
                     navigate("/")
+                    reset();
                 }
                 return response.json()
             })
@@ -49,7 +54,7 @@ const LoginPage = () => {
                 alert(data.message)
             })
             .catch(error => console.log(error))
-        reset();
+        
     }
     return (
         <div className="login container">
@@ -87,7 +92,7 @@ const LoginPage = () => {
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">
-                        <Button as="sub" variant="success" onClick={handleSubmit(loginUser)} >Login</Button>
+                        <Button as="sub" variant="success" onClick={handleSubmit(loginUser)} ><FontAwesomeIcon icon={faSignIn} />{" "}Login</Button>
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

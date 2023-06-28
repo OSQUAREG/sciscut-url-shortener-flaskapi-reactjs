@@ -62,6 +62,7 @@ const NavBar = () => {
             .catch(error => console.log(error))
     }, []);
 
+
     const [showView, setShowView] = useState(false);
     const closeViewModal = () => { setShowView(false) };
     const showViewModal = () => { setShowView(true) };
@@ -127,6 +128,9 @@ const NavBar = () => {
                         <User
                             username={currentUser?.username}
                             email={currentUser?.email}
+                            date_created={currentUser?.date_created}
+                            date_modified={currentUser?.date_modified}
+                            links={currentUser?.links.length}
                         />
                     </Modal.Body>
                     <Modal.Footer>
