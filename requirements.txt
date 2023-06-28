@@ -11,7 +11,7 @@ decorator==5.1.1
 Deprecated==1.2.14
 dnspython==2.3.0
 email-validator==1.1.2
-Flask==2.3.2
+Flask
 Flask-Admin==1.6.1
 Flask-Caching==2.0.2
 Flask-Cors==3.0.10
