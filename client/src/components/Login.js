@@ -35,7 +35,7 @@ const LoginPage = () => {
             body: JSON.stringify(data)
         }
 
-        fetch(`/auth/login`, requestOptions)
+        fetch(`${baseUrl}/auth/login`, requestOptions)
             .then(response => {
                 // console.log(response.status)
                 if (response.status === 201) {

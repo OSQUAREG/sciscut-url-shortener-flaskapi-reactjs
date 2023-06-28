@@ -344,7 +344,7 @@ const NavBar = () => {
     return (
         <Navbar bg="dark" variant='dark' expand="lg">
             <Container className='container'>
-                <Navbar.Brand href="/" style={{ color: "red", fontSize: "30px", fontWeight: "bold" }} >Scissor App</Navbar.Brand>
+                <Navbar.Brand href="/" style={{ color: "red", fontSize: "30px", fontWeight: "bold" }} >Sciscut</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">

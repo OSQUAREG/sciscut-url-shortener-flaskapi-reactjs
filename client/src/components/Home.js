@@ -373,7 +373,7 @@ const HomePage = () => {
                     <Col xs={12} sm={6}>
                         <h1 className="heading">
                             Welcome to <br />
-                            <span style={{ color: "red", fontSize: "100px" }}>Scissor App</span>
+                            <span style={{ color: "red", fontSize: "100px" }}>Sciscut</span>
                         </h1>
                         <br />
                         <h5><i>...your favorite URL Shortener and QR Code Generator</i></h5>
