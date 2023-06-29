@@ -47,7 +47,7 @@ const NavBar = () => {
     };
 
     useEffect(() => {
-        fetch(`/user`, requestOptions)
+        fetch(`${baseUrl}/user`, requestOptions)
             .then(response => {
                 // console.log(response.status)
                 if (response.status === 401) {
