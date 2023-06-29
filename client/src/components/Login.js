@@ -88,8 +88,8 @@ const LoginPage = () => {
                             />
                             <Button variant="secondary btn-sm" type="button" onClick={toggleShowPassword}
                             >{showPassword ? "Hide Password" : "Show Password"}</Button>
-                            {errors.password && <small style={{ color: "red" }}>Password is required</small>}
                         </InputGroup>
+                        {errors.password && <small style={{ color: "red" }}>Password is required</small>}
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

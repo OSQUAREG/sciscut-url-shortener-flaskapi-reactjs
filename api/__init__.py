@@ -16,7 +16,8 @@ from .config.config import config_dict
 from .views.auth import auth_ns
 from .views.user import user_ns
 from .views.link import links_ns
-from .views.admin import admin_links_ns, admin_users_ns
+
+# from .views.admin import admin_links_ns, admin_users_ns
 from flask_login import LoginManager
 from flask_admin import Admin, menu
 from flask_admin.contrib.sqla import ModelView
@@ -36,7 +37,7 @@ def create_app(config=config_dict["dev"]):
     app.config["FLASK_ADMIN_SWATCH"] = "united"
     admin = Admin(
         app,
-        name="Admin: Scissor-URL Shortener API",
+        name="Admin: Sciscut-URL Shortener API",
         template_mode="bootstrap3",
         index_view=MyAdminIndexView(),
         base_template="my_master.html",
@@ -95,7 +96,7 @@ def create_app(config=config_dict["dev"]):
 
     api = Api(
         app=app,
-        title="Scissor - URL Shortener API",
+        title="Sciscut - URL Shortener API",
         description="This is a URL Shortener API build with Flask RESTX in Python.",
         version="1.0",
         authorizations=authorizations,
@@ -106,8 +107,8 @@ def create_app(config=config_dict["dev"]):
     api.add_namespace(auth_ns, path="/auth")
     api.add_namespace(user_ns, path="/user")
     api.add_namespace(links_ns, path="/links")
-    api.add_namespace(admin_users_ns, path="/admin/users")
-    api.add_namespace(admin_links_ns, path="/admin/links")
+    # api.add_namespace(admin_users_ns, path="/admin/users")
+    # api.add_namespace(admin_links_ns, path="/admin/links")
 
     @app.shell_context_processor
     def make_shell_context():
