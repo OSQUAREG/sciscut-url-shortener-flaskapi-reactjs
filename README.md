@@ -36,7 +36,7 @@ This includes all the user operations such as retrieving and updating user profi
 2. **Update Current User** (PUT) - for updating information about the current user. ***Note: whenever an authentication data changes, the user is logged out.***
 3. **Change Password** (PATCH) - for changing current password of the current user.
 
-![1688036725999](image/README/1688036725999.png)
+![1688055594490](image/README/1688055594490.png)
 
 ### Links Namespace
 
@@ -63,16 +63,15 @@ This includes all the user operations such as retrieving and updating user profi
 
 The Home page shows the lists of short URLs (if any) and displays any selected short URL details.
 
-**When Logged Out**
+##### **When Logged Out**
 
 ![1688039365444](image/README/1688039365444.png)
 
-**When Logged In (without Short URLs List)**
+##### **When Logged In (without Short URLs List)**
 
 ![1688040185166](image/README/1688040185166.png)
 
-**When Logged In (with Short URLs List)**
-
+##### **When Logged In (with Short URLs List)**
 
 
 ### Sign up Page
@@ -82,7 +81,6 @@ The Home page shows the lists of short URLs (if any) and displays any selected s
 ### Login Page
 
 ![1688039936753](image/README/1688039936753.png)
-
 
 ### Shorten URL Page
 

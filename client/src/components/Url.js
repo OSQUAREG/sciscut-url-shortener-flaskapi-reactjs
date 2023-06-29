@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, Image } from 'react-bootstrap';
-import { domain } from '..';
+import { domain, qr_code_folder } from '..';
 import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,7 +26,7 @@ export const URL = ({ title, long_url, short_url, date_created, visits, onRetrie
 
 export const URLDetails = ({ id, title, long_url, short_url, date_created, visits, is_custom, qr_code_added, qr_code_id, onUpdate, onDelete, onReset, onGenerateQR, onRemoveQR, onCopy }) => {
 
-    const imagePath = `/qr_code_img/${qr_code_id}.png`
+    const imagePath = `${qr_code_folder}/${qr_code_id}.png`
     const imageName = `${qr_code_id}.png`
 
     const downloadImage = (imagePath, imageName) => {
