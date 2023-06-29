@@ -1,13 +1,14 @@
 import os
-from sqlalchemy import and_, func, or_, text
+from sqlalchemy import and_, func, or_
 from ..utils import db, DB_Func
 from datetime import datetime
 import string
 import validators
 import qrcode
 from random import choices
+from decouple import config
 
-qr_code_folder_path = "client/public/qr_code_img"
+qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
 
 
 class Link(db.Model, DB_Func):

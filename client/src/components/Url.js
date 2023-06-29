@@ -29,6 +29,8 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
     const imagePath = `${qr_code_folder}/${qr_code_id}.png`
     const imageName = `${qr_code_id}.png`
 
+    console.log(imagePath);
+
     const downloadImage = (imagePath, imageName) => {
         const link = document.createElement("a");
         link.href = imagePath;

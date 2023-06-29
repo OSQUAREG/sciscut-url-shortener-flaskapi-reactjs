@@ -381,7 +381,7 @@ const HomePage = () => {
                     </Col>
                     <Col xs={12} sm={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <div>
-                            <Image src="/scissor-url-shortener3.png" rounded fluid />
+                            <Image src="scissor-url-shortener3.png" rounded fluid />
                         </div>
                         <br />
                     </Col>
