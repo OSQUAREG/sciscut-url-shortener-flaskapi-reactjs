@@ -68,7 +68,7 @@ const AnalyticsPage = () => {
                     <div>
                         <h5>
                             <b>Short URL: </b><Link to={`/${link?.short_url}`} target="_blank" rel="noopener noreferrer">{domain}/{link?.short_url}</Link>{" "}
-                            <Button className="btn btn-sm" variant="secondary" onClick={() => copyShortURL(link?.short_url)}>
+                            <Button className="btn btn-sm m-1" variant="secondary" onClick={() => copyShortURL(link?.short_url)}>
                                 <FontAwesomeIcon icon={faCopy} />{" "}Copy
                             </Button>
                         </h5>

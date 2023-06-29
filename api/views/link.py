@@ -86,7 +86,6 @@ class ShortenLink(Resource):
 
 @links_ns.route("/<short_url>")
 class RedirectLink(Resource):
-    # @cache.cached(timeout=50)
     @links_ns.doc(
         description="Redirect Shortened URL",
         params={"short_url": "Shortened or Customized URL"},
@@ -120,7 +119,7 @@ class RedirectLink(Resource):
         )
         new_click.save_to_db()
 
-        message = f"URL redirected successfully. Visits: {link.visits}. IP Address: {new_click.ip_address}"
+        message = f"{link.title}'s URL redirected successfully."
         long_url = link.long_url
 
         response = {"message": message, "data": long_url}

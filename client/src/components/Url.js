@@ -52,7 +52,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                 <div>
                     <h5>
                         <b>Short URL: </b><Link to={`/${short_url}`} target="_blank" rel="noopener noreferrer">{domain}/{short_url}</Link>{" "}
-                        <Button className="btn btn-sm" variant="secondary" onClick={onCopy}>
+                        <Button className="btn btn-sm m-1" variant="secondary" onClick={onCopy}>
                             <FontAwesomeIcon icon={faCopy} />
                             {" "}Copy
                         </Button>

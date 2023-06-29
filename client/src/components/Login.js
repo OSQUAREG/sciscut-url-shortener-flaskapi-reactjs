@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Form, Button, InputGroup } from "react-bootstrap";
+import { Alert, Form, Button, InputGroup, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { baseUrl } from "..";
@@ -40,7 +40,6 @@ const LoginPage = () => {
                 // console.log(response.status)
                 if (response.status === 201) {
                     navigate("/")
-                    reset();
                 }
                 return response.json()
             })
@@ -52,12 +51,14 @@ const LoginPage = () => {
                 login(data.access_token)
                 setShow(true)
                 alert(data.message)
+                const reload = window.location.reload()
+                reload()
             })
             .catch(error => console.log(error))
-
+        reset()
     }
     return (
-        <div className="login container">
+        <Container>
             <div className="form">
                 {show ?
                     <>
@@ -100,7 +101,7 @@ const LoginPage = () => {
                     </Form.Group>
                 </Form>
             </div>
-        </div>
+        </Container>
     )
 };
 
