@@ -14,11 +14,11 @@ import FeaturePage from './components/Features';
 import AnalyticsPage from './components/Analytics';
 import Footer from './components/Footer';
 
-export const baseUrl = "http://localhost:5000";
-export const domain = "http://localhost:3000";
+// export const baseUrl = "http://localhost:5000";
+// export const domain = "http://localhost:3000";
 
-// export const baseUrl = "https://sciscut-api.onrender.com"
-// export const domain = "https://sciscut.onrender.com"
+export const baseUrl = "https://sciscut-api.onrender.com"
+export const domain = "https://sciscut.onrender.com"
 
 export const usernameRegex = /^[a-zA-Z0-9_]{3,25}$/;
 export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
