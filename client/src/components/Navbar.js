@@ -130,7 +130,7 @@ const NavBar = () => {
                             email={currentUser?.email}
                             date_created={currentUser?.date_created}
                             date_modified={currentUser?.date_modified}
-                            links={currentUser?.links.length}
+                            links={currentUser?.links?.length}
                         />
                     </Modal.Body>
                     <Modal.Footer>

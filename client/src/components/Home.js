@@ -36,8 +36,8 @@ const HomePage = () => {
                 .then(data => {
                     // console.log(data.data)
                     setLinks(data.data);
-                    // console.log(data.data.length);
-                    getURL(data.data.length);
+                    console.log(data.data?.length);
+                    getURL(data.data?.length);
                 })
                 .catch(error => console.log(error))
         }, []);
