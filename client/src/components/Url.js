@@ -29,7 +29,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
     const imageURL = `/api/qr-code/${qr_code_id}`
     const imageName = `${qr_code_id}.png`
 
-    console.log(imagePath);
+    console.log(imageURL);
 
     const downloadImage = (imagePath, imageName) => {
         const link = document.createElement("a");
