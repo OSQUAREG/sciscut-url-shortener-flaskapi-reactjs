@@ -237,13 +237,17 @@ const HomePage = () => {
                     <Modal.Body>
                         <Form>
                             <Form.Group className="mb-3">
-                                <Form.Label>URL Title</Form.Label>
-                                <Form.Control type="text" placeholder="[Optional] Enter URL Title"
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control type="text" placeholder="[Optional] Enter short description"
                                     {...register("title", {
                                         required: { value: false },
                                         maxLength: { value: 50, message: "Maximum length of 50 exceeded." }
                                     })}
                                 />
+                                <Form.Text className="text-muted">
+                                    Short description of your URL.
+                                </Form.Text>
+                                <br />
                                 {errors.title && <small style={{ color: "red" }}>{errors.title.message}</small>}
                             </Form.Group>
                             <br />

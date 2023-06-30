@@ -65,10 +65,14 @@ const ShortenURLPage = () => {
                 }
                 <Form>
                     <Form.Group className="mb-3">
-                        <Form.Label>URL Title</Form.Label>
-                        <Form.Control type="text" placeholder="[Optional] Enter URL Title"
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control type="text" placeholder="[Optional] Enter short description"
                             {...register("title", { required: false, maxLength: 50 })}
                         />
+                        <Form.Text className="text-muted">
+                            Short description of your URL
+                        </Form.Text>
+                        <br />
                         {errors.password?.type === "maxLength" && <small style={{ color: "red" }}>Maximum Character should be 50.</small>}
                     </Form.Group>
                     <br />

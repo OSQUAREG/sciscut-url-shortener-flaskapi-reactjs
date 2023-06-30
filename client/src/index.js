@@ -1,10 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import NavBar from './components/Navbar';
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+// import jwt_decode from 'jwt-decode';
+
+import NavBar from './components/Navbar';
 import HomePage from './components/Home';
 import SignupPage from './components/Signup';
 import LoginPage from './components/Login';
@@ -13,6 +14,7 @@ import RedirectLink from './components/Redirect';
 import FeaturePage from './components/Features';
 import AnalyticsPage from './components/Analytics';
 import Footer from './components/Footer';
+import jwtDecode from 'jwt-decode';
 
 // export const baseUrl = "http://localhost:5000";
 // export const domain = "http://localhost:3000";
@@ -29,9 +31,53 @@ export const urlRegex = /^(https?:\/\/)/;
 
 
 const App = () => {
-    console.log(baseUrl);
-    console.log(domain);
-    console.log(qr_code_folder);
+    // console.log(baseUrl);
+    // console.log(domain);
+    // console.log(qr_code_folder);
+
+    let token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
+
+    if (token) {
+        const decodedJWT = jwtDecode(token);
+        const expirationTime = decodedJWT.exp * 1000
+        console.log(expirationTime)
+        if (expirationTime && expirationTime > Date.now()) {
+            // Token is still valid
+            console.log("Token is still valid.");
+            // setIsAuthenticated(true);
+        } else {
+            // Token has expired
+            localStorage.removeItem('REACT_TOKEN_AUTH_KEY');
+            console.log("Your login has expired");
+            alert("Your login has expired.");
+            // setIsAuthenticated(false);
+        };
+    }
+
+    // const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    // useEffect(() => {
+    //     // Check if the token exists in local storage
+    //     const token = localStorage.getItem('REACT_TOKEN_AUTH_KEY');
+    //     if (token) {
+    //         // Decode the token to extract expiration time
+    //         const decodedToken = jwt_decode(token);
+    //         const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+    //         console.log("token:", token, "\nexpirationTime:", expirationTime);
+
+    //         if (expirationTime && expirationTime > Date.now()) {
+    //             // Token is still valid
+    //             setIsAuthenticated(true);
+    //         } else {
+    //             // Token has expired
+    //             localStorage.removeItem('REACT_TOKEN_AUTH_KEY');
+    //             setIsAuthenticated(false);
+    //         }
+    //     } else {
+    //         setIsAuthenticated(false);
+    //     }
+    // }, []);
+
     return (
         <Router>
             <div>

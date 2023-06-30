@@ -1,5 +1,5 @@
 import { createAuthProvider } from 'react-token-auth';
-import {baseUrl} from ".";
+import { baseUrl } from ".";
 
 
 export const { useAuth, authFetch, login, logout } = createAuthProvider({
@@ -27,7 +27,7 @@ export const logoutUser = () => {
     fetch(`${baseUrl}/auth/logout`, requestOptions)
         .then(response => {
             // console.log(response.status)
-            if (response.status === 200 || response.status === 401) {
+            if (response.status === 200 || response.status === 401 || response.status === 500) {
                 localStorage.removeItem("REACT_TOKEN_AUTH_KEY");
                 logout();
                 window.location.href = "/login";
