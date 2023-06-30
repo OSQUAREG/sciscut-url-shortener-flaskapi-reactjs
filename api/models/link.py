@@ -9,9 +9,6 @@ from random import choices
 from decouple import config
 
 qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
-# qr_code_folder_path = os.path.join(
-#     app.root_path, "..", "client", "public", "qr_code_folder"
-# )
 
 
 class Link(db.Model, DB_Func):
@@ -83,6 +80,7 @@ class Link(db.Model, DB_Func):
                 qr_code_folder_path, f"{self.qr_code_id}.png"
             )
             qr_code_abs_path = os.path.abspath(qr_code_img_path)
+            print("\n\n\nqr_code_abs_path:", qr_code_abs_path, "\n\n\n")
             os.makedirs(os.path.dirname(qr_code_abs_path), exist_ok=True)
             img.save(qr_code_abs_path)
 

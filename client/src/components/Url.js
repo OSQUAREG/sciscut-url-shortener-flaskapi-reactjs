@@ -29,6 +29,8 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
     const imageName = `${qr_code_id}.png`
     const imagePath = `${process.env.REACT_APP_QR_CODE_FOLDER_PATH}/${qr_code_id}.png`
 
+    console.log(imagePath)
+
     const downloadImage = (imagePath, imageName) => {
         const link = document.createElement("a");
         link.href = imagePath;
