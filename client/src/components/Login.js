@@ -55,8 +55,8 @@ const LoginPage = () => {
                 reload()
             })
             .catch(error => console.log(error))
-        reset()
-    }
+        reset();
+    };
     return (
         <Container>
             <div className="form">

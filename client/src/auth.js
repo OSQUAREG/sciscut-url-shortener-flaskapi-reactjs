@@ -27,7 +27,7 @@ export const logoutUser = () => {
     fetch(`${baseUrl}/auth/logout`, requestOptions)
         .then(response => {
             // console.log(response.status)
-            if (response.status === 200 || response.status === 401 || response.status === 500) {
+            if (response.status === 200 || response.status === 401) {
                 localStorage.removeItem("REACT_TOKEN_AUTH_KEY");
                 logout();
                 window.location.href = "/login";
