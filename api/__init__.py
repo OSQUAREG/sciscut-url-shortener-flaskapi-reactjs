@@ -131,6 +131,10 @@ def create_app(config=config_dict["dev"]):
     def not_found(error):
         return app.send_static_file("index.html")
 
+    @app.errorhandler(500)
+    def server_error(error):
+        return app.send_static_file("index.html")
+
     @app.route("/home")
     def home():
         return render_template("index.html")

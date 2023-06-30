@@ -27,7 +27,7 @@ const LoggedOutLinks = () => {
             <Nav.Link className="nav-link" href="/">Home</Nav.Link>
             <Nav.Link className="nav-link" href="/features">Features</Nav.Link>
             <Nav.Link className="nav-link" href="/signup">Signup</Nav.Link>
-            <Nav.Link className="nav-link" href="/login">Login</Nav.Link>
+            {/* <Nav.Link className="nav-link" href="/login">Login</Nav.Link> */}
         </>
     )
 };
@@ -49,8 +49,8 @@ const NavBar = () => {
     useEffect(() => {
         fetch(`${baseUrl}/user`, requestOptions)
             .then(response => {
-                // console.log(response.status)
-                if (response.status === 401) {
+                console.log(response.status)
+                if (response.status === 401 || response.status === 500) {
                     logoutUser();
                 }
                 return response.json()
