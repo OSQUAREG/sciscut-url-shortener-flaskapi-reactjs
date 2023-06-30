@@ -297,12 +297,12 @@ const HomePage = () => {
                 </Modal>
 
                 <Container>
-                    {links.length > 0 &&
+                    {links?.length > 0 &&
                         <>
                             <Button className="mb-3" variant="success" href="/shorten"><FontAwesomeIcon icon={faCut} />{" "}Shorten New URL</Button>
                         </>
                     }
-                    {links && links.length > 0 ? (
+                    {links && links?.length > 0 ? (
                         <>
                             <Row>
                                 <Col xs={12} sm={5} className="mb-3 boxShadow" >

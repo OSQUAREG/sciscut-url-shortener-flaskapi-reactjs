@@ -9,6 +9,9 @@ from random import choices
 from decouple import config
 
 qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
+# qr_code_folder_path = os.path.join(
+#     app.root_path, "..", "client", "public", "qr_code_folder"
+# )
 
 
 class Link(db.Model, DB_Func):
@@ -76,15 +79,21 @@ class Link(db.Model, DB_Func):
             self.qr_code_id = (
                 self.short_url if not self.is_custom else self.generate_short_url()
             )
-            img.save(f"{qr_code_folder_path}/{self.qr_code_id}.png")
+            qr_code_img_path = os.path.join(
+                qr_code_folder_path, f"{self.qr_code_id}.png"
+            )
+            qr_code_abs_path = os.path.abspath(qr_code_img_path)
+            os.makedirs(os.path.dirname(qr_code_abs_path), exist_ok=True)
+            img.save(qr_code_abs_path)
 
     def remove_qr_code(self):
-        img_path = f"{qr_code_folder_path}/{self.qr_code_id}.png"
+        qr_code_img_path = f"{qr_code_folder_path}/{self.qr_code_id}.png"
+        qr_code_abs_path = os.path.abspath(qr_code_img_path)
         # checks if file exist.
-        if os.path.exists(img_path):
+        if os.path.exists(qr_code_abs_path):
             # Delete the file
             self.qr_code_id = None
-            os.remove(img_path)
+            os.remove(qr_code_abs_path)
 
     def rename_qr_code(self):
         if self.qr_code_added:

@@ -1,3 +1,4 @@
+import os
 from http import HTTPStatus
 from flask import Flask, jsonify, render_template, send_from_directory
 from flask_restx import Api
@@ -23,6 +24,10 @@ from flask_admin import Admin, menu
 from flask_admin.contrib.sqla import ModelView
 from api.admin.admin_views import MyAdminIndexView, MyModelView, LogoutMenuLink
 from flask_cors import CORS
+from decouple import config
+
+
+qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
 
 
 def create_app(config=config_dict["dev"]):
@@ -117,9 +122,10 @@ def create_app(config=config_dict["dev"]):
     # Serve the QR code image
     @app.route("/api/qr-code/<qr_code_id>")
     def serve_qr_code(qr_code_id):
-        qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
-        qr_code_img_path = f"{qr_code_folder_path}/{qr_code_id}.png"
-        return send_from_directory(app.root_path, qr_code_img_path)
+        qr_code_path = os.path.join(qr_code_folder_path, f"{qr_code_id}.png")
+        print("\n\nqr_code_folder_path", qr_code_folder_path)
+        print("\n\nqr_code_path", qr_code_path)
+        return send_from_directory(qr_code_folder_path, f"{qr_code_id}.png")
 
     @app.errorhandler(404)
     def not_found(error):

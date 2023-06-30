@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css'
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
 import jwtDecode from 'jwt-decode';
 
 import NavBar from './components/Navbar';
@@ -27,9 +27,6 @@ export const urlRegex = /^(https?:\/\/)/;
 
 
 const App = () => {
-    // console.log(baseUrl);
-    // console.log(domain);
-    // console.log(qr_code_folder);
 
     let token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
 
@@ -45,6 +42,7 @@ const App = () => {
             localStorage.removeItem('REACT_TOKEN_AUTH_KEY');
             console.log("Your login has expired");
             alert("Your login has expired.");
+            window.location.href = "/login";
         };
     };
 
