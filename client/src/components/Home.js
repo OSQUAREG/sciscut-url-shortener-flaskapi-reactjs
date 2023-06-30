@@ -214,6 +214,7 @@ const HomePage = () => {
             navigator.clipboard.writeText(link)
                 .then(() => {
                     console.log(`${link} copied to clipboard`);
+                    alert(`${link} copied to clipboard`);
                 })
                 .catch((error) => {
                     console.error('Error copying string to clipboard:', error);

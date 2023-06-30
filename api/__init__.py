@@ -1,6 +1,6 @@
 from http import HTTPStatus
-from flask import Flask, jsonify, render_template, url_for
-from flask_restx import Api, Namespace
+from flask import Flask, jsonify, render_template, send_from_directory
+from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from .blocklist import BLOCKLIST
@@ -110,22 +110,16 @@ def create_app(config=config_dict["dev"]):
     # api.add_namespace(admin_users_ns, path="/admin/users")
     # api.add_namespace(admin_links_ns, path="/admin/links")
 
-    @app.shell_context_processor
-    def make_shell_context():
-        return {
-            "db": db,
-            "User": User,
-            "Link": Link,
-            "ClickAnalytic": ClickAnalytic,
-            "drop_create_all": drop_create_all,
-            "create_default_admin": create_default_admin,
-            "empty_qr_folder": empty_qr_folder,
-            "qr_folder": qr_code_folder_path,
-        }
-
     @app.route("/")
     def index():
         return app.send_static_file("index.html")
+
+    # Serve the QR code image
+    @app.route("/api/qr-code/<qr_code_id>")
+    def serve_qr_code(qr_code_id):
+        qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
+        qr_code_img_path = f"{qr_code_folder_path}/{qr_code_id}.png"
+        return send_from_directory(app.root_path, qr_code_img_path)
 
     @app.errorhandler(404)
     def not_found(error):
@@ -143,5 +137,18 @@ def create_app(config=config_dict["dev"]):
     @app.route("/")
     def admin_index():
         return render_template("index.html")
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {
+            "db": db,
+            "User": User,
+            "Link": Link,
+            "ClickAnalytic": ClickAnalytic,
+            "drop_create_all": drop_create_all,
+            "create_default_admin": create_default_admin,
+            "empty_qr_folder": empty_qr_folder,
+            "qr_folder": qr_code_folder_path,
+        }
 
     return app

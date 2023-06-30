@@ -26,7 +26,7 @@ export const URL = ({ title, long_url, short_url, date_created, visits, onRetrie
 
 export const URLDetails = ({ id, title, long_url, short_url, date_created, visits, is_custom, qr_code_added, qr_code_id, onUpdate, onDelete, onReset, onGenerateQR, onRemoveQR, onCopy }) => {
 
-    const imagePath = `${qr_code_folder}/${qr_code_id}.png`
+    const imageURL = `/api/qr-code/${qr_code_id}`
     const imageName = `${qr_code_id}.png`
 
     console.log(imagePath);
@@ -80,8 +80,8 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                 {qr_code_added &&
                     <>
                         {/* <p>{qr_code_id}</p> */}
-                        <Image src={imagePath} rounded fluid />
-                        <Button className="btn btn-sm m-2" variant="secondary" onClick={() => downloadImage(imagePath, imageName)}>
+                        <Image src={imageURL} alt="QR Code" rounded fluid />
+                        <Button className="btn btn-sm m-2" variant="secondary" onClick={() => downloadImage(imageURL, imageName)}>
                             <FontAwesomeIcon icon={faDownload} />{" "}Download QR Code
                         </Button>
                     </>
