@@ -31,7 +31,7 @@ qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
 
 
 def create_app(config=config_dict["dev"]):
-    app = Flask(__name__, static_url_path="/", static_folder="./client/build")
+    app = Flask(__name__, static_url_path="/", static_folder="./client/public")
     app.config.from_object(config)
     db.init_app(app)
     cache.init_app(app)
