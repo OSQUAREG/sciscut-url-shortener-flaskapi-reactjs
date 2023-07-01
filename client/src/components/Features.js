@@ -7,29 +7,29 @@ const FeaturePage = () => {
         <div>
             <Container>
                 <h1>Main Features</h1>
+                <p>The main features of this app includes: </p>
                 <Container>
                     <h3>URL Shortener</h3>
                     <p>
-                        With this app, everyone is able to shorten their long URL into a 5 character-long URL, by its auto-generating functionality.
-
+                        for shortening your long URLs into an auto-generated 5-character long URL end part.
                     </p>
                 </Container>
                 <Container>
-                    <h3>Custom URLs</h3>
+                    <h3>URL Customizer</h3>
                     <p>
-                        You can also customize your URLs to be unique for personal or private use.
+                        for customizing your long URL making it unique for personal or corporate use.
                     </p>
                 </Container>
                 <Container>
                     <h3>QR Code Generator</h3>
                     <p>
-                        Users can also generate QR Codes for their links and downloaded for external use on social media and media posters.
+                        for generating QR codes for any URL, and can be downloaded for external use on social media and media posters.
                     </p>
                 </Container>
                 <Container>
                     <h3>Click Analytics</h3>
                     <p>
-                        You can also track information on how your URLs are used with every click.
+                        for getting and tracking your short URL click information, such as when and where the click was performed, therefore knowing how your URL is being visited.
                     </p>
                 </Container>
             </Container>

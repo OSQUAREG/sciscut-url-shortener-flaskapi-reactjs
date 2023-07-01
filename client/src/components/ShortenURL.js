@@ -42,11 +42,10 @@ const ShortenURLPage = () => {
                 setServerResponse(data.message)
                 // console.log(data.status)
                 setShow(true)
-                navigate("/")
+                // navigate("/")
                 alert(data.message)
             })
             .catch(error => console.log(error))
-
         reset()
     }
 
@@ -92,12 +91,12 @@ const ShortenURLPage = () => {
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">
-                        <Form.Label>Custom URL</Form.Label>
-                        <Form.Control type="text" placeholder="[Optional] Enter a custom URL"
+                        <Form.Label>Custom Back-Half</Form.Label>
+                        <Form.Control type="text" placeholder="[Optional] Example: my-favourite-website"
                             {...register("short_url", { required: false, maxLength: 20 })}
                         />
                         <Form.Text className="text-muted">
-                            Ignore for auto-generated short URL.
+                            Ignore for auto-generated short back-half.
                         </Form.Text>
                         <br />
                         {errors.short_url?.type === "maxLength" && <small style={{ color: "red" }}>Maximum Character should be 20.</small>}

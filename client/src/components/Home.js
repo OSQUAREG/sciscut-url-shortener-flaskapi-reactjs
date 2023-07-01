@@ -232,7 +232,7 @@ const HomePage = () => {
                 >
                     <Modal.Header closeButton>
                         <Modal.Title id="contained-modal-title-vcenter">
-                            Update Short URL
+                            Edit Short URL
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -268,8 +268,8 @@ const HomePage = () => {
                             </Form.Group>
                             <br />
                             <Form.Group className="mb-3">
-                                <Form.Label>Short/Custom URL</Form.Label>
-                                <Form.Control type="text" placeholder="[Optional] Enter a custom URL"
+                                <Form.Label>Short/Custom Back-Half</Form.Label>
+                                <Form.Control type="text" placeholder="[Optional] Example: my-favourite-website"
                                     {...register("short_url", {
                                         required: { value: false },
                                         minimum: { value: 5, message: "Minimum length of 5 not reached." },
