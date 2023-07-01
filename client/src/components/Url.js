@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Image } from 'react-bootstrap';
-import { domain, qr_code_folder } from '..';
+import { baseUrl, domain, qr_code_folder } from '..';
 import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -83,7 +83,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                         {/* <p>{qr_code_id}</p> */}
                         {/* <img src={window.location.origin + imagePath1} alt="QR Code" rounded fluid />
                         <br /> */}
-                        <img src={`${short_url}.png`} alt="QR Code" rounded fluid />
+                        <img src={`${domain}/${short_url}.png`} alt="QR Code" rounded fluid />
                         <Button className="btn btn-sm m-2" variant="secondary" onClick={() => downloadImage(imagePath, imageName)}>
                             <FontAwesomeIcon icon={faDownload} />{" "}Download QR Code
                         </Button>
