@@ -37,13 +37,17 @@ This is a URL Shortener web app with the Backend built with **Flask RestX API** 
 * Basic Javascript Concepts.
 * Create React App and Installation
 * Components and Arrow Functions
+* Use of React DOM, React Router DOM, React Hook Form, React FontAweome.
+* Use of React Bootstrap tools (such as Button, Modal, Form, Container, Row, Col, Image etc.)
+* Frontend Authentication and Validations
+* Use of Regex
 
 ## Knowledge Acquired
 
-* Use of React JS for Frontend Design
+* Knowledge of React JS for Frontend Design
 * Use of Environment Variables for React JS
 * Use of Thunder Client for testing API routes/endpoints.
-* Deployment of both Web Service and Static on Render.com
+* Deployment of both Web Service and Static Site on Render.com
 
 ## Backend API (Server-Side)
 

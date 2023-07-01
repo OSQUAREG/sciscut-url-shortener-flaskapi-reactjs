@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, Image } from 'react-bootstrap';
 import { baseUrl, domain, qr_code_folder } from '..';
 import { Link } from 'react-router-dom';
+// import qr_code_img from ".../public"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faRefresh, faEdit, faChartBar, faRemove, faQrcode, faTrash, faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -27,8 +28,8 @@ export const URL = ({ title, long_url, short_url, date_created, visits, onRetrie
 export const URLDetails = ({ id, title, long_url, short_url, date_created, visits, is_custom, qr_code_added, qr_code_id, onUpdate, onDelete, onReset, onGenerateQR, onRemoveQR, onCopy }) => {
 
     const imageName = `${qr_code_id}.png`
-    // const imagePath1 = `${process.env.REACT_APP_QR_CODE_FOLDER_PATH}/${qr_code_id}.png`
-    const imagePath = `${qr_code_id}.png`
+    const imagePath = `${process.env.REACT_APP_QR_CODE_FOLDER_PATH}/${qr_code_id}.png`
+    // const imagePath = `${qr_code_id}.png`
 
     console.log(imagePath)
 
@@ -83,7 +84,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                         {/* <p>{qr_code_id}</p> */}
                         {/* <img src={window.location.origin + imagePath1} alt="QR Code" rounded fluid />
                         <br /> */}
-                        <img src={`${domain}/${qr_code_id}.png`} alt="QR Code" rounded fluid />
+                        <img src={`${process.env.PUBLIC_URL}/${imagePath}`} alt="QR Code" rounded fluid />
                         <Button className="btn btn-sm m-2" variant="secondary" onClick={() => downloadImage(imagePath, imageName)}>
                             <FontAwesomeIcon icon={faDownload} />{" "}Download QR Code
                         </Button>

@@ -87,6 +87,7 @@ class Link(db.Model, DB_Func):
     def remove_qr_code(self):
         qr_code_img_path = f"{qr_code_folder_path}/{self.qr_code_id}.png"
         qr_code_abs_path = os.path.abspath(qr_code_img_path)
+        print("\n\n\nqr_code_abs_path:", qr_code_abs_path, "\n\n\n")
         # checks if file exist.
         if os.path.exists(qr_code_abs_path):
             # Delete the file
