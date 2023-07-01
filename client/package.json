@@ -21,7 +21,7 @@
     "react-token-auth": "^2.3.8",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "https://sciscut-api.onrender.com",
+
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

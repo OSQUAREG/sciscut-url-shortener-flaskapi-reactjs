@@ -4,7 +4,11 @@
 
 ## Introduction
 
-This is a URL Shortener web app with the Backend built with **Flask RestX API** (Python Framework) and the Frontend built with **React.js** (JavaScript Framework).
+This is a URL Shortener web app with the Backend built with **Flask RestX API** (Python Framework) and the Frontend built with **React.js** (JavaScript Framework), and deployed using render.com.
+
+**Website:** https://sciscut.onrender.com
+
+**API Link:** https://sciscut-api.onrender.com
 
 ## Main Functionalities
 
@@ -72,7 +76,6 @@ The Home page shows the lists of short URLs (if any) and displays any selected s
 ![1688040185166](image/README/1688040185166.png)
 
 ##### **When Logged In (with Short URLs List)**
-
 
 ### Sign up Page
 
