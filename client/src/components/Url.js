@@ -84,7 +84,8 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                         {/* <p>{qr_code_id}</p> */}
                         {/* <img src={window.location.origin + imagePath1} alt="QR Code" rounded fluid />
                         <br /> */}
-                        <img src={process.env.PUBLIC_URL + imagePath} alt="QR Code" />
+                        <img src="/qr_code_img/6El1v.png" alt="QR Code" />
+                        <img src="6El1v.png" alt="QR Code1" />
                         <Button className="btn btn-sm m-2" variant="secondary" onClick={() => downloadImage(imagePath, imageName)}>
                             <FontAwesomeIcon icon={faDownload} />{" "}Download QR Code
                         </Button>
