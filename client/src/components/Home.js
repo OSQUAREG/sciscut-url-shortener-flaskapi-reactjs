@@ -346,7 +346,7 @@ const HomePage = () => {
                                                     onRemoveQR={() => removeQRCode(link?.id)}
                                                     onCopy={() => copyShortURL(link?.short_url)}
                                                 />
-                                                <img src={`/client/public/qr_code_img/${link.qr_code_id}.png`} />
+                                                {/* <img src={`/client/public/qr_code_img/${link.qr_code_id}.png`} /> */}
                                             </>
                                         }
                                     </div>

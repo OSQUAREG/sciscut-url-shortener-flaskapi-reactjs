@@ -88,7 +88,6 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
                         <Button className="btn btn-sm m-2" variant="secondary" onClick={() => downloadImage(imagePath, imageName)}>
                             <FontAwesomeIcon icon={faDownload} />{" "}Download QR Code
                         </Button>
-                        {/* {qrCodeUrl && <img src={qrCodeUrl} alt="QR Code" />} */}
                     </>
                 }
                 <div className="m-3">

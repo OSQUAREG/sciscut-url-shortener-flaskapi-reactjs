@@ -1,3 +1,4 @@
+import os
 import geocoder
 from flask import request
 from flask_restx import Resource, abort
@@ -14,6 +15,7 @@ from ..views import links_ns
 from http import HTTPStatus
 from ..utils import cache, limiter
 from ..utils import db
+from decouple import config
 
 
 @links_ns.route("/shorten")
@@ -228,6 +230,14 @@ class GetUpdateDeleteLink(Resource):
         # checks if current user owns the shortened link or is an admin
         if not (current_user.id == link.user_id or current_user.is_admin):
             abort(HTTPStatus.UNAUTHORIZED, message="Unauthorized Request.")
+
+        qr_code_folder_path = config("QR_CODE_FOLDER_PATH")
+        qr_code_img_path = f"{qr_code_folder_path}/{link.qr_code_id}.png"
+        qr_code_abs_path = os.path.abspath(qr_code_img_path)
+        if os.path.exists(qr_code_abs_path) and link.qr_code_added:
+            message = f"'{link.title}' link retrieved successfully and Image found!"
+            response = {"message": message, "data": link}
+            return response, HTTPStatus.OK
 
         message = f"'{link.title}' link retrieved successfully"
         response = {"message": message, "data": link}
