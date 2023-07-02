@@ -83,6 +83,7 @@ const HomePage = () => {
                 .then(data => {
                     // console.log(data.data);
                     setLink(data.data);
+                    console.log(data.message);
                 })
                 .catch(error => console.log(error))
         };
