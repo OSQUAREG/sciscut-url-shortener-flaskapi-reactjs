@@ -328,23 +328,26 @@ const HomePage = () => {
                                     <h2 className="mb-3">Short URL Details</h2>
                                     <div >
                                         {link &&
-                                            <URLDetails
-                                                id={link.id}
-                                                title={link?.title}
-                                                long_url={link?.long_url}
-                                                short_url={link?.short_url}
-                                                visits={link?.visits}
-                                                is_custom={link?.is_custom}
-                                                date_created={link?.date_created}
-                                                qr_code_added={link?.qr_code_added}
-                                                qr_code_id={link?.qr_code_id}
-                                                onUpdate={() => showModal(link?.id)}
-                                                onReset={() => resetShortURL(link?.id)}
-                                                onDelete={() => deleteURL(link?.id)}
-                                                onGenerateQR={() => generateQRCode(link?.id)}
-                                                onRemoveQR={() => removeQRCode(link?.id)}
-                                                onCopy={() => copyShortURL(link?.short_url)}
-                                            />
+                                            <>
+                                                <URLDetails
+                                                    id={link.id}
+                                                    title={link?.title}
+                                                    long_url={link?.long_url}
+                                                    short_url={link?.short_url}
+                                                    visits={link?.visits}
+                                                    is_custom={link?.is_custom}
+                                                    date_created={link?.date_created}
+                                                    qr_code_added={link?.qr_code_added}
+                                                    qr_code_id={link?.qr_code_id}
+                                                    onUpdate={() => showModal(link?.id)}
+                                                    onReset={() => resetShortURL(link?.id)}
+                                                    onDelete={() => deleteURL(link?.id)}
+                                                    onGenerateQR={() => generateQRCode(link?.id)}
+                                                    onRemoveQR={() => removeQRCode(link?.id)}
+                                                    onCopy={() => copyShortURL(link?.short_url)}
+                                                />
+                                                <img src={`/qr_code_img/${link.qr_code_id}.png`} />
+                                            </>
                                         }
                                     </div>
                                 </Col>
