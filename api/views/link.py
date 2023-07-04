@@ -21,7 +21,7 @@ from decouple import config
 @links_ns.route("/shorten")
 class ShortenLink(Resource):
     @limiter.limit("10/minute")
-    @cache.cached(timeout=50)
+    @cache.cached(timeout=10)
     @links_ns.expect(add_link_model)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Shorten Long URL Links")
@@ -88,6 +88,7 @@ class ShortenLink(Resource):
 
 @links_ns.route("/<short_url>")
 class RedirectLink(Resource):
+    @limiter.exempt
     @links_ns.doc(
         description="Redirect Shortened URL",
         params={"short_url": "Shortened or Customized URL"},
@@ -130,8 +131,8 @@ class RedirectLink(Resource):
 
 @links_ns.route("/reset/<int:link_id>")
 class ResetLink(Resource):
-    @limiter.limit("10/minute")
-    @cache.cached(timeout=50)
+    @limiter.limit("5/minute")
+    @cache.cached(timeout=30)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Reset Shortened URL", params={"link_id": "Link ID"})
     @jwt_required()
@@ -153,8 +154,8 @@ class ResetLink(Resource):
 
 @links_ns.route("/qr_code/<int:link_id>")
 class GenerateQRCode(Resource):
-    @limiter.limit("10/minute")
-    @cache.cached(timeout=300)
+    @limiter.limit("5/minute")
+    @cache.cached(timeout=10)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Generate Link QR Code", params={"link_id": "Link ID"})
     @jwt_required()
@@ -178,8 +179,8 @@ class GenerateQRCode(Resource):
 
 @links_ns.route("/remove/qr_code/<int:link_id>")
 class RemoveQRCode(Resource):
-    @limiter.limit("10/minute")
-    @cache.cached(timeout=300)
+    @limiter.limit("5/minute")
+    @cache.cached(timeout=10)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Remove Link QR Code", params={"link_id": "Link ID"})
     @jwt_required()
@@ -204,7 +205,7 @@ class RemoveQRCode(Resource):
 @links_ns.route("/user")
 class GetCurrentUserLinks(Resource):
     @limiter.exempt
-    @cache.cached(timeout=50)
+    @cache.cached(timeout=10)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Retrieve Current User Links")
     @jwt_required()
@@ -220,7 +221,7 @@ class GetCurrentUserLinks(Resource):
 @links_ns.route("/<int:link_id>")
 class GetUpdateDeleteLink(Resource):
     @limiter.limit("10/minute")
-    # @cache.cached(timeout=50)
+    @cache.cached(timeout=10)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Retrieve Single Link", params={"link_id": "Link ID"})
     @jwt_required()
@@ -244,7 +245,7 @@ class GetUpdateDeleteLink(Resource):
         return response, HTTPStatus.OK
 
     @limiter.limit("10/minute")
-    @cache.cached(timeout=50)
+    @cache.cached(timeout=10)
     @links_ns.expect(update_link_model)
     @links_ns.marshal_with(link_response_model)
     @links_ns.doc(description="Update Single Link", params={"link_id": "Link ID"})
@@ -323,7 +324,7 @@ class GetUpdateDeleteLink(Resource):
         response = {"message": message, "data": link}
         return response, HTTPStatus.OK
 
-    @cache.cached(timeout=50)
+    @limiter.limit("2/minute")
     @links_ns.doc(description="Delete Single Link", params={"link_id": "Link ID"})
     @jwt_required()
     def delete(self, link_id):
@@ -340,6 +341,8 @@ class GetUpdateDeleteLink(Resource):
 
 @links_ns.route("/analytics/<int:link_id>")
 class ClickAnalytics(Resource):
+    @limiter.limit("10/minute")
+    @cache.cached(timeout=30)
     @links_ns.marshal_with(link_analytics_response_model)
     @links_ns.doc(
         description="Click Analytics for Single Link", params={"link_id": "Link ID"}

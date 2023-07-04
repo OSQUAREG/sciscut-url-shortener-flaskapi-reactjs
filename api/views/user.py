@@ -91,7 +91,7 @@ class GetUpdateCurrentUser(Resource):
 @user_ns.route("/change-password")
 class UserPasswordChange(Resource):
     @limiter.limit("1/minute")
-    @cache.cached(timeout=50)
+    @cache.cached(timeout=30)
     @user_ns.expect(change_password_model)
     @user_ns.doc(description="Current User Password Change")
     @jwt_required()

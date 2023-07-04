@@ -20,10 +20,6 @@ db = SQLAlchemy()
 cache = Cache()
 limiter = Limiter(
     get_remote_address,
-    # default_limits=[
-    #     "20 per day", 
-    #     "10 per hour",
-    # ],
     storage_uri="memory://",
 )
 

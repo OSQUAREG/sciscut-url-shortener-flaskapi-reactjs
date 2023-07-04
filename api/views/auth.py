@@ -3,7 +3,13 @@ from ..blocklist import BLOCKLIST
 from ..models import User
 from ..utils import cache, limiter
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+)
 from ..serializers.user import user_model, user_response_model, user_resp_logged_model
 from ..views import auth_ns
 from http import HTTPStatus
@@ -30,13 +36,16 @@ class UserSignup(Resource):
         new_user = User(email=email, password_hash=generate_password_hash(password))
         new_user.save_to_db()
 
-        message = f"New User '{new_user.username}' signed up successfully. Please login."
+        message = (
+            f"New User '{new_user.username}' signed up successfully. Please login."
+        )
         response = {"message": message, "data": new_user}
         return response, HTTPStatus.CREATED
 
 
 @auth_ns.route("/login")
 class UserLogin(Resource):
+    @limiter.exempt
     @auth_ns.expect(user_model)
     @auth_ns.marshal_with(user_resp_logged_model)
     @auth_ns.doc(description="User Login: Generates JWT Tokens")
@@ -47,9 +56,12 @@ class UserLogin(Resource):
         password = data.get("password")
 
         user = User.query.filter_by(email=email).first()
-        if not(user and user.check_pwd_hash(password)):
-            abort(HTTPStatus.UNAUTHORIZED, message="Invalid email or password. Pleaase try again.")
-            
+        if not (user and user.check_pwd_hash(password)):
+            abort(
+                HTTPStatus.UNAUTHORIZED,
+                message="Invalid email or password. Pleaase try again.",
+            )
+
         access_token = create_access_token(identity=user.email)
         refresh_token = create_refresh_token(identity=user.email)
 
@@ -58,15 +70,14 @@ class UserLogin(Resource):
             "message": message,
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "data": user
+            "data": user,
         }
         return response, HTTPStatus.CREATED
 
 
 @auth_ns.route("/refresh")
 class TokenRefresh(Resource):
-    @limiter.limit("10/minute")
-    @cache.cached(timeout=50)
+    @cache.cached(timeout=10)
     @auth_ns.doc(description="Refresh JWT Access Token")
     @jwt_required(refresh=True)
     def post(self):
@@ -76,14 +87,15 @@ class TokenRefresh(Resource):
 
         message = f"Refresh successful."
         response = {
-                "message": message,
-                "access_token": access_token,
-            }
+            "message": message,
+            "access_token": access_token,
+        }
         return response, HTTPStatus.OK
 
 
 @auth_ns.route("/logout")
 class UserLogout(Resource):
+    @limiter.exempt
     @auth_ns.doc(description="Logout: Block JWT Token")
     @jwt_required()
     def post(self):

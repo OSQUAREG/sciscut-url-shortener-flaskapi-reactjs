@@ -80,31 +80,19 @@ class Link(db.Model, DB_Func):
                 qr_code_folder_path, f"{self.qr_code_id}.png"
             )
             qr_code_abs_path = os.path.abspath(qr_code_img_path)
-            print("\n\n\nqr_code_abs_path:", qr_code_abs_path, "\n\n\n")
+            # print("\n\n\nqr_code_abs_path:", qr_code_abs_path, "\n\n\n")
             os.makedirs(os.path.dirname(qr_code_abs_path), exist_ok=True)
             img.save(qr_code_abs_path)
 
     def remove_qr_code(self):
         qr_code_img_path = f"{qr_code_folder_path}/{self.qr_code_id}.png"
         qr_code_abs_path = os.path.abspath(qr_code_img_path)
-        print("\n\n\nqr_code_abs_path:", qr_code_abs_path, "\n\n\n")
+        # print("\n\n\nqr_code_abs_path:", qr_code_abs_path, "\n\n\n")
         # checks if file exist.
         if os.path.exists(qr_code_abs_path):
             # Delete the file
             self.qr_code_id = None
             os.remove(qr_code_abs_path)
-
-    def rename_qr_code(self):
-        if self.qr_code_added:
-            if (self.qr_code_id != self.short_url) and not self.is_custom:
-                old_img_name = f"{self.qr_code_id}.png"
-                new_img_name = f"{self.short_url}.png"
-
-                old_img_path = os.path.join(qr_code_folder_path, old_img_name)
-                new_img_path = os.path.join(qr_code_folder_path, new_img_name)
-
-                os.rename(old_img_path, new_img_path)
-                self.qr_code_id = self.short_url
 
     def validate_title_by_user(self, title: str, user_id: int):
         """Validates that new title does not already exist for current user."""
