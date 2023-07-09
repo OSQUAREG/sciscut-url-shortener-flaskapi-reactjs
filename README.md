@@ -236,14 +236,20 @@ To check the API endpoints documentation, go to: https://sciscut-api.onrender.co
    ```
    $ npm audit fix
    ```
-4. Then start the development server, using below command:
+4. Before you start the client server, create a .env file in the client folder and set the following environment variables in it:
 
    ```
+   REACT_APP_BASE_URL = "http://localhost:5000"
+   REACT_APP_DOMAIN_URL = "http://localhost:3000"
+   REACT_APP_QR_CODE_FOLDER_PATH="/qr_code_img"
+   ```
+5. Then start the development server, using below command:
+
+```
    $ npm start
-   ```
+```
+
 5. The npm start command will start the sever and automatically open the React project in your browser with the address: http://localhost:3000.
-
-
 
 ## License
 
