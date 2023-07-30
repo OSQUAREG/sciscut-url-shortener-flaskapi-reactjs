@@ -72,7 +72,7 @@ const ShortenURLPage = () => {
                             Short description of your URL
                         </Form.Text>
                         <br />
-                        {errors.password?.type === "maxLength" && <small style={{ color: "red" }}>Maximum Character should be 50.</small>}
+                        {errors.title?.type === "maxLength" && <small style={{ color: "red" }}>Maximum Character should be 50.</small>}
                     </Form.Group>
                     <br />
                     <Form.Group className="mb-3">

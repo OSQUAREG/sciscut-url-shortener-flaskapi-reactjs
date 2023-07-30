@@ -42,7 +42,7 @@ export const URLDetails = ({ id, title, long_url, short_url, date_created, visit
     return (
         <div className="mb-3 box border rounded p-2">
             <Card className='card p-4'>
-                <div className="m-3">
+                <div className="mb-3">
                     <Button className="btn btn-sm m-2" variant="success" onClick={onUpdate} ><FontAwesomeIcon icon={faEdit} />{" "}Edit</Button>
                     <Button className="btn btn-sm m-2" variant="secondary" onClick={onReset} ><FontAwesomeIcon icon={faRefresh} />{" "}Reset</Button>
                     <Button className="btn btn-sm m-2" variant="danger" onClick={onDelete} ><FontAwesomeIcon icon={faTrash} />{" "}Delete</Button>

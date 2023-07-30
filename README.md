@@ -249,7 +249,7 @@ To check the API endpoints documentation, go to: https://sciscut-api.onrender.co
    $ npm start
 ```
 
-5. The npm start command will start the sever and automatically open the React project in your browser with the address: http://localhost:3000.
+6. The npm start command will start the sever and automatically open the React project in your browser with the address: http://localhost:3000.
 
 ## License
 
